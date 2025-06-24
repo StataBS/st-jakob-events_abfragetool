@@ -1,10 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { useRoute } from '#app';
 
 // Access the route to get query params
 const route = useRoute();
-const targetDate = ref(route.query.date || null); // fallback to null if not set
+const router = useRouter();
+
+// Get date from query param or default to today
+const targetDate = ref(route.query.date || new Date().toISOString().split('T')[0]);
+
+// Normalize date for comparison
+function normalizeDate(dateString) {
+  return new Date(dateString).toISOString().split('T')[0];
+}
 
 const API_KEY = "2aa275695edce50cc5a5fdc264fa347cf13ab304876621bfe1a3273f"
 
@@ -18,9 +26,22 @@ const eventsError = ref(null);
 const anreiseData = ref([]);
 const anreiseError = ref(null);
 
+// Computed: filtered events
 const filteredEvents = computed(() => {
+  if (!targetDate.value) return eventsData.value;
   return eventsData.value.filter(event => {
-    return event.datum === targetDate.value;
+    const eventDate = normalizeDate(event.datum);
+    return eventDate === targetDate.value;
+  });
+});
+
+// Watch for changes to targetDate and update the URL
+watch(targetDate, (newDate) => {
+  router.push({
+    query: {
+      ...route.query,
+      date: newDate
+    }
   });
 });
 
@@ -58,7 +79,14 @@ onMounted(() => {
 
 <template>
  <div class="m-10 w-[900px]">
-    <h1 class="font-bold md:text-5xl text-3xl text-primary-500 pb-10">Events on {{ targetDate }}</h1>
+  <div class="my-5">
+  <label>
+      Datum auswählen:
+      <input type="date" v-model="targetDate" />
+    </label>
+    <div v-if="error" class="error">{{ error }}</div>
+  </div>
+    <h1 class="font-bold md:text-5xl text-3xl text-primary-500 pb-10">Anlässe am {{ targetDate }}</h1>
     <div v-if="error">{{ error }}</div>
     <ul v-else>
       <li class="text-xl event-item bg-blue-200 mb-10 p-5 rounded-md" v-for="(event, index) in filteredEvents" :key="index">
