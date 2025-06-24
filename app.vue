@@ -9,7 +9,9 @@ const ANREISE_API_URL = "https://data.bs.ch/api/explore/v2.1/catalog/datasets/10
 
 // Reactive state
 const eventsData = ref([]);
-const error = ref(null);
+const eventsError = ref(null);
+const anreiseData = ref([]);
+const anreiseError = ref(null);
 
 // Function to fetch events
 async function fetchEventsData() {
@@ -20,13 +22,27 @@ async function fetchEventsData() {
     eventsData.value = data;
   } catch (err) {
     console.error("Error fetching events data:", err);
-    error.value = "Failed to fetch events data";
+    eventsError.value = "Failed to fetch events data";
+  }
+}
+
+// Function to fetch anreise
+async function fetchAnreiseData() {
+  try {
+
+    const response = await fetch(`${ANREISE_API_URL}?apikey=${API_KEY}`);
+    const data = await response.json();
+    anreiseData.value = data;
+  } catch (err) {
+    console.error("Error fetching anreise data:", err);
+    anreiseError.value = "Failed to fetch anreise data";
   }
 }
 
 // Fetch on component mount
 onMounted(() => {
   fetchEventsData();
+  fetchAnreiseData();
 });
 </script>
 
@@ -35,8 +51,8 @@ onMounted(() => {
     <h1>Events</h1>
     <div v-if="error">{{ error }}</div>
     <ul v-else>
-      <li v-for="(event, index) in eventsData" :key="index">
-        {{ event.name || 'Untitled Event' }}
+      <li v-for="(event, index) in anreiseData" :key="index">
+        {{ event || 'Untitled Event' }}
       </li>
     </ul>
   </div>
