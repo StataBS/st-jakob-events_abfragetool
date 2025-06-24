@@ -12,11 +12,17 @@ const eventsData = ref([]);
 const eventsError = ref(null);
 const anreiseData = ref([]);
 const anreiseError = ref(null);
+const targetDate = ref('2025-05-16');
+
+const filteredEvents = computed(() => {
+  return eventsData.value.filter(event => {
+    return event.datum === targetDate.value;
+  });
+});
 
 // Function to fetch events
 async function fetchEventsData() {
   try {
-
     const response = await fetch(`${EVENTS_API_URL}?apikey=${API_KEY}`);
     const data = await response.json();
     eventsData.value = data;
@@ -47,12 +53,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <h1>Events</h1>
+ <div>
+    <h1>Events on {{ targetDate }}</h1>
     <div v-if="error">{{ error }}</div>
     <ul v-else>
-      <li v-for="(event, index) in anreiseData" :key="index">
-        {{ event || 'Untitled Event' }}
+      <li v-for="(event, index) in filteredEvents" :key="index">
+        {{ event.name || 'Untitled Event' }}
       </li>
     </ul>
   </div>
