@@ -1,5 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from '#app';
+
+// Access the route to get query params
+const route = useRoute();
+const targetDate = ref(route.query.date || null); // fallback to null if not set
 
 const API_KEY = "2aa275695edce50cc5a5fdc264fa347cf13ab304876621bfe1a3273f"
 
@@ -12,7 +17,6 @@ const eventsData = ref([]);
 const eventsError = ref(null);
 const anreiseData = ref([]);
 const anreiseError = ref(null);
-const targetDate = ref('2025-05-16');
 
 const filteredEvents = computed(() => {
   return eventsData.value.filter(event => {
@@ -53,13 +57,24 @@ onMounted(() => {
 </script>
 
 <template>
- <div>
-    <h1>Events on {{ targetDate }}</h1>
+ <div class="m-10 w-[900px]">
+    <h1 class="font-bold md:text-5xl text-3xl text-primary-500 pb-10">Events on {{ targetDate }}</h1>
     <div v-if="error">{{ error }}</div>
     <ul v-else>
-      <li v-for="(event, index) in filteredEvents" :key="index">
-        {{ event.name || 'Untitled Event' }}
+      <li class="text-xl event-item bg-blue-200 mb-10 p-5 rounded-md" v-for="(event, index) in filteredEvents" :key="index">
+        <span class="font-bold">{{ event.name, event.ort, event.info_text || 'kein Name' }}</span>
+        <span>{{ event.ort || 'kein Ort' }}</span>
+        <span>{{ event.info_text || 'kein Info-Text' }}</span>
       </li>
     </ul>
   </div>
 </template>
+
+<style>
+.event-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+</style>
