@@ -7,7 +7,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="w-full md:col-span-7 px-15 pt-20 pb-30 mt-20 rounded-large"
+    class="container w-full md:col-span-7 px-15 pt-20 pb-30 mt-20 rounded-large"
     :class="props.infoBoxType === 'info' ? 'bg-green-200' : 'bg-red-200'"
   >
     {{ props.text }}
