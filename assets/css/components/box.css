@@ -1,0 +1,50 @@
+@layer components {
+    .box {
+        @apply relative my-30 rounded-large;
+        @apply p-20 pr-30 lg:pr-30 text-gray-900 max-w-[610px] bg-green-50;
+    }
+
+    .box__title {
+        @apply text-xl text-balance mr-[6px] text-primary-600;
+    }
+
+    .box__addon {
+        @apply text-sm lg:text-base text-gray-900;
+    }
+
+    .box__content {
+        @apply mt-15 hyphens-auto text-base;
+    }
+
+    .box__icon {
+        @apply absolute right-15 top-15 flex items-center justify-between text-primary-600;
+    }
+
+    .box__icon img,
+    .box__icon svg{
+        @apply size-50;
+    }
+
+    .box--warning {
+        @apply bg-red-50;
+    }
+
+    .box--warning .box__title {
+        @apply text-red-800;
+    }
+
+    .box--warning .box__icon {
+        @apply text-red-800;
+    }
+
+    .box--empfehlung {
+        @apply bg-gray-50;
+    }
+    .box--empfehlung .box__title {
+        @apply text-gray-900;
+    }
+
+    .box--empfehlung .box__icon {
+        @apply text-gray-900;
+    }
+}

@@ -2,6 +2,7 @@
 @import './components/page.css';
 @import './components/button.css';
 @import './components/arrow-icon.css';
+@import './components/box.css';
 @import './components/box-section.css';
 @import './components/opening-times-list.css';
 @import './components/header.css';
@@ -25,16 +26,16 @@
 @font-face {
   font-family: 'Inter';
   src:
-    url(/fonts/Inter-Regular.woff2) format('woff2'),
-    url(/fonts/Inter-Regular.woff) format('woff');
+    url('/fonts/Inter-Regular.woff2') format('woff2'),
+    url('/fonts/Inter-Regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: 'Inter';
   src:
-    url(/fonts/Inter-Medium.woff2) format('woff2'),
-    url(/fonts/Inter-Medium.woff) format('woff');
+    url('/fonts/Inter-Medium.woff2') format('woff2'),
+    url('/fonts/Inter-Medium.woff') format('woff');
   font-weight: 500;
   font-style: normal;
 }
@@ -42,8 +43,8 @@
 @font-face {
   font-family: 'Inter';
   src:
-    url(/fonts/Inter-Bold.woff2) format('woff2'),
-    url(/fonts/Inter-Bold.woff) format('woff');
+    url('/fonts/Inter-Bold.woff2') format('woff2'),
+    url('/fonts/Inter-Bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
 }
@@ -74,6 +75,15 @@ body {
     &.has-header-visible {
       ---base-sticky-top: var(--page-header-height);
     }
+
+    a {
+      @apply underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+      text-decoration-color: #bababa;
+      color: #146c8b;
+    }
+    a:hover { color: #1e4557; }
   }
 
   hr {

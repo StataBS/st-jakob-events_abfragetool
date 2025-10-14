@@ -1,25 +1,26 @@
-<script setup>
-const props = defineProps({
-  text: String,
-  infoBoxType: String,
-});
+<script setup lang="ts">
+const props = withDefaults(defineProps<{
+  /** Array of HTML strings */
+  htmlBlocks?: string[]
+}>(), {
+  htmlBlocks: () => [],
+})
+
+const uniqueHtml = computed(() =>
+    Array.from(new Set((props.htmlBlocks || [])
+        .map(h => (h || '').trim())
+        .filter(Boolean)))
+)
 </script>
 
 <template>
-  <div
-    class="container w-full md:col-span-7 px-15 pt-20 pb-30 mt-20 rounded-large"
-    :class="props.infoBoxType === 'info' ? 'bg-green-200' : 'bg-red-200'"
+  <Box
+      v-if="uniqueHtml.length"
+      variant="info"
+      title="Information"
   >
-    {{ props.text }}
-  </div>
+    <div class="space-y-4">
+      <div v-for="(html, i) in uniqueHtml" :key="i" v-html="html" />
+    </div>
+  </Box>
 </template>
-
-<style scoped>
-.annotation {
-  padding: 20px;
-  position: absolute;
-  width: 200px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-}
-</style>

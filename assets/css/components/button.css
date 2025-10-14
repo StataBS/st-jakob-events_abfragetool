@@ -32,6 +32,30 @@
     }
   }
 
+  .button.is-tab {
+    @apply inline-flex items-center rounded-[20px] cursor-pointer transition-all duration-300 ease-in-out;
+    @apply bg-gray-20 border-blue-900 text-blue-900;
+    @apply px-[12px] py-[8px];
+  }
+
+  .button.is-tab:hover {
+    @apply bg-gray-100;
+  }
+
+  .button.is-tab.is-active {
+    @apply border-purple-600 shadow-purple-600;
+  }
+
+  .button.is-tab img,
+  .button.is-tab svg {
+    @apply w-20 h-20 mr-[7px] transition-transform duration-300;
+  }
+
+  /* Optional container helper for groups of tab buttons */
+  .tabs-container {
+    @apply flex flex-wrap items-center gap-10 mt-20 mb-10;
+  }
+
   .button.is-strong {
     @apply bg-blue-900 border-blue-900 text-white;
 
@@ -135,7 +159,7 @@
     }
   }
 
-  .button:not(.button.is-action):not(.button.is-super) {
+  .button:not(.button.is-action):not(.button.is-super):not(button.is-tab) {
     &.has-icon {
       @apply inline-flex items-center;
       @apply pl-10 pr-20;

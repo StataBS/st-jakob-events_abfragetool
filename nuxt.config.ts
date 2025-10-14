@@ -11,12 +11,39 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   modules: [
-    'motion-v/nuxt',     
+    'motion-v/nuxt',
     '@nuxtjs/tailwindcss',
+    ['@kanton-basel-stadt/designsystem/nuxt', {
+      iconOptions: {
+        compiler: 'vue3',
+      }
+    }],
   ],
+
+  app: {
+    baseURL: '/stj-eventverkehr/',
+    head: {
+      htmlAttrs: { lang: 'de' },
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
+      ],
+      title: 'Veranstaltungen im Raum St. Jakob',
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/icons/favicon.png' },
+      ],
+    },
+  },
+
+  runtimeConfig: {
+    public: {
+      bsApiKey: process.env.BS_API_KEY || '',
+    },
+  },
+
   tailwindcss: {
     viewer: false,
   },
-  css: ['~/public/fonts.css'],
+  css: ['~/assets/css/tailwind.css'],
   postcss,
 })

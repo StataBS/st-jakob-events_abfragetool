@@ -17,7 +17,7 @@
       @apply text-left align-top;
     }
     thead {
-      @apply border-b-2 border-b-body text-xs text-primary-500;
+      @apply border-b-2 border-b-body text-xs text-primary-600;
       th {
         @apply pb-5;
       }
@@ -63,7 +63,7 @@
       }
 
       td[data-head-label]:before {
-        @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-500 mobile-only:font-bold mobile-only:mb-10;
+        @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-600 mobile-only:font-bold mobile-only:mb-10;
       }
 
       td {

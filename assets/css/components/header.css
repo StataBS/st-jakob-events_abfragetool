@@ -1,11 +1,5 @@
 :root {
-  --page-header-height: 118px;
-  @screen md {
-    --page-header-height: 58px;
-  }
-  @screen xl {
-    --page-header-height: 70px;
-  }
+  --page-header-height: 70px;
 }
 @layer components {
   .header-title {
@@ -13,7 +7,8 @@
   }
 
   .page-header {
-    @apply grid items-center container [@media(min-width:1660px)]:max-w-[2560px];
+    @apply grid items-center container max-w-[2560px];
+    @apply flex items-center gap-30 lg:gap-60 py-20;
     height: var(--page-header-height);
 
     grid-template:
