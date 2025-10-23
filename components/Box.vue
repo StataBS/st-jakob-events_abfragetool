@@ -42,32 +42,6 @@ const hasContent = computed(() => {
       : 'box--info'
     ]"
   >
-    <!-- Title row -->
-    <div class="box__header">
-      <strong class="box__title">{{ title }}</strong>
-      <span v-if="titleAddon" class="box__addon">({{ titleAddon }})</span>
-    </div>
-
-    <!-- Body -->
-    <div class="box__content">
-      <div v-if="html" v-html="html" />
-      <slot v-else />
-
-      <!-- Images (moved into Box.vue) -->
-      <div v-if="images?.length" class="flex flex-wrap gap-4 my-4">
-        <img
-            v-for="(src, i) in images"
-            :key="`${src}-${i}`"
-            :src="src"
-            :alt="alts?.[i] || ''"
-            class="max-w-full h-auto"
-            loading="lazy"
-            decoding="async"
-        />
-      </div>
-    </div>
-
-    <!-- Icon (slot > iconSrc > variant fallback) -->
     <div class="box__icon" aria-hidden="true">
       <slot name="icon">
         <img
@@ -88,5 +62,30 @@ const hasContent = computed(() => {
         />
       </slot>
     </div>
+    <!-- Title row -->
+    <div class="box__header">
+      <strong class="box__title">{{ title }}</strong>
+      <span v-if="titleAddon" class="box__addon">({{ titleAddon }})</span>
+    </div>
+
+    <!-- Body -->
+    <div class="box__content">
+      <div v-if="html" v-html="html" class="mb-15"/>
+      <slot v-else />
+
+      <!-- Images (moved into Box.vue) -->
+      <div v-if="images?.length" class="flex flex-wrap gap-4 my-4">
+        <img
+            v-for="(src, i) in images"
+            :key="`${src}-${i}`"
+            :src="src"
+            :alt="alts?.[i] || ''"
+            class="max-w-full h-auto"
+            loading="lazy"
+            decoding="async"
+        />
+      </div>
+    </div>
+
   </div>
 </template>

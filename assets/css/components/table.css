@@ -10,24 +10,26 @@
   }
 
   .table {
-    @apply w-full;
+    @apply w-full border-collapse;
     th,
     td {
       @apply p-10;
       @apply text-left align-top;
     }
     thead {
-      @apply border-b-2 border-b-body text-xs text-primary-600;
+      @apply border-b-2 border-b-body text-base text-primary-600;
       th {
         @apply pb-5;
       }
     }
 
     tbody {
-      @apply border-b;
       td,
       th {
         @apply p-10;
+      }
+      tr {
+        @apply border-b;
       }
     }
     td,
@@ -63,7 +65,7 @@
       }
 
       td[data-head-label]:before {
-        @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-600 mobile-only:font-bold mobile-only:mb-10;
+        @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-600 mobile-only:font-bold mobile-only:mb-5;
       }
 
       td {
