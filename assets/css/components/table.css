@@ -79,4 +79,9 @@
   figure > .table ~ figcaption {
     @apply italic mt-5;
   }
+
+  /* Only for the header-only table variant */
+  .table--header-only tbody {
+    display: none;
+  }
 }
