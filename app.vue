@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
+import { normalizeISODateString } from '~/composables/useDateUtils'
 
 const route = useRoute()
 const router = useRouter()
 
-// date param (default today)
-const selectedDate = ref<string>(route.query.datum as string || new Date().toISOString().slice(0,10))
+// date param (default today, ISO-UTC)
+const defaultIso = new Date().toISOString().slice(0,10);
+const selectedDate = ref<string>((route.query.datum as string) || defaultIso);
+
+// whenever it changes, normalize + reflect in query
 watch(selectedDate, (d) => {
-  router.replace({ query: { ...route.query, datum: d } })
-})
+  const n = normalizeISODateString(d) || defaultIso;
+  if (n !== d) selectedDate.value = n;               // snap to a valid day (e.g., 2025-02-31 → 2025-02-28)
+  router.replace({ query: { ...route.query, datum: n } });
+});
 
 // fetch data
 const { fetchEvents, fetchAnreise, fetchTimedInfo } = useBsApi()
