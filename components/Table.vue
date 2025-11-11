@@ -57,9 +57,12 @@ const props = withDefaults(defineProps<{
 
     <!-- Empty state row (used by NoEvents) -->
     <tr v-if="!rows || rows.length === 0">
-      <td :colspan="columns.length" class="py-10">
-        <slot name="empty">–</slot>
-      </td>
+      <td
+          v-for="col in columns"
+          :key="col.key"
+          :data-head-label="col.label"
+          :class="col.tdClass"
+      />
     </tr>
     </tbody>
   </table>

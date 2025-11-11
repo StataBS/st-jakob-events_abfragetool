@@ -10,6 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.72",
+    "@nuxt/ui": "^4.1.0",
     "@nuxtjs/tailwindcss": "^6.11.0",
     "postcss": "^8.4.29",
     "postcss-cli": "^10.1.0",
