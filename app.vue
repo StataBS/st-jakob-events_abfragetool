@@ -97,4 +97,36 @@ const iconSrcMap = computed<Record<string, string>>(() =>
       Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen. Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
     </div>
   </div>
+  <hr class="h-[4px] border-none bg-green-600" />
+  <footer class="footer print:hidden">
+    <h1 class="sr-only">Fusszeile</h1>
+    <div class="footer-container container">
+      <nav aria-label="Kontakt & Datenquellen">
+        <ul class="links links--spaced">
+          <li>
+            <a
+                class="link link--tall"
+                href="https://www.bs.ch/jsd/polizei/fuer-ihre-sicherheit/im-verkehr/im-strassenverkehr/bikantonale-geschaeftsstelle-eventverkehr-st-jakob"
+                target="_blank"
+            >
+              Bikantonale Geschäftsstelle Eventverkehr St. Jakob
+            </a>
+          </li>
+          <li>
+            <a
+                class="link link--tall"
+                href="https://data.bs.ch/explore/?refine.tags=eventverkehr-st.jakob"
+                target="_blank"
+            >
+              Datenquelle: Kantonales Datenportal Basel-Stadt
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="footer-copyright">
+        © 2025 Basel-Stadt
+      </div>
+    </div>
+  </footer>
 </template>
