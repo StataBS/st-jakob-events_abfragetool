@@ -86,7 +86,7 @@ const iconSrcMap = computed<Record<string, string>>(() =>
     <TransportTabs v-model="activeTransport" :icon-src-map="iconSrcMap" />
 
     <RecommendationBox
-        :title="`Anreiseempfehlung – ${activeTransport}`"
+        :title="`${activeTransport}`"
         :html="anreiseItem?.text_html"
         :images="anreiseItem?.bildquellen"
         :alts="anreiseItem?.alt_texte"
