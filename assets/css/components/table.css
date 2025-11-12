@@ -47,30 +47,33 @@
 
     &.has-mobile-style {
       @apply mobile-only:border-t;
-      thead {
-        @apply mobile-only:hidden;
-      }
+      thead { @apply mobile-only:hidden; }
       tbody th,
       tbody tr,
-      tbody td {
-        @apply mobile-only:block;
-      }
-      td,
-      th {
-        @apply mobile-only:px-0;
-      }
-
-      tbody tr {
-        @apply mobile-only:border-t;
-      }
+      tbody td { @apply mobile-only:block; }
+      td, th { @apply mobile-only:px-0; }
+      tbody tr { @apply mobile-only:border-t; }
 
       td[data-head-label]:before {
         @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-600 mobile-only:font-bold mobile-only:mb-5;
       }
 
-      td {
-        p {
-          @apply not-last:mb-10;
+      td p { @apply not-last:mb-10; }
+
+      &.table--header-only {
+        @apply mobile-only:border-t-2 mobile-only:border-b-0 mobile-only:border-body;
+        thead {
+          @apply mobile-only:block mobile-only:border-b-0;
+        }
+        thead tr,
+        thead th {
+          @apply mobile-only:block;
+        }
+        tbody {
+          @apply mobile-only:hidden;
+        }
+        caption {
+          @apply mobile-only:block mobile-only:mb-0 mobile-only:pb-5 mobile-only:text-base mobile-only:text-primary-600;
         }
       }
     }
@@ -79,8 +82,6 @@
   figure > .table ~ figcaption {
     @apply italic mt-5;
   }
-
-  /* Only for the header-only table variant */
   .table--header-only tbody {
     display: none;
   }

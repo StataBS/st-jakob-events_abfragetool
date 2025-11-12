@@ -1,8 +1,19 @@
-<!-- pages/wochenansicht.vue -->
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
-import { normalizeISODateString, formatGermanLong } from '~/composables/useDateUtils'
+import { normalizeISODateString } from '~/composables/useDateUtils'
+import IconArrowEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-east'
+import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
+
+// helper to move the selected week by +/- 7 days
+function shiftWeek(deltaDays: number) {
+  const base = new Date(selectedDate.value)
+  base.setDate(base.getDate() + deltaDays)
+  const nextIso = iso(base)
+  selectedDate.value = nextIso
+  // scroll to top so users see the new week header immediately
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -10,23 +21,19 @@ const router = useRouter()
 const defaultIso = new Date().toISOString().slice(0,10)
 const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
 
-// normalize + keep in query (stays on /wochenansicht)
 watch(selectedDate, (d) => {
   const n = normalizeISODateString(d) || defaultIso
   if (n !== d) selectedDate.value = n
   router.replace({ path: '/wochenansicht', query: { ...route.query, datum: n } })
 })
 
-// date helpers
 const iso = (d: Date) => d.toISOString().slice(0,10)
-const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate() + n); return x }
-// simple: 7-day window starting at selectedDate
+const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate()+n); return x }
 const start = computed(() => new Date(selectedDate.value))
-const days = computed(() => Array.from({ length: 7 }, (_, i) => iso(addDays(start.value, i))))
+const days = computed(() => Array.from({length:7}, (_,i) => iso(addDays(start.value, i))))
 
-// data
 const { fetchEvents } = useBsApi()
-const { data: eventsRaw } = await useAsyncData('events-week', fetchEvents)
+const { data: eventsRaw } = await useAsyncData('events', fetchEvents)
 const { filterEventsByDate } = useFilters()
 
 const eventsByDay = computed<Record<string, any[]>>(() => {
@@ -35,59 +42,80 @@ const eventsByDay = computed<Record<string, any[]>>(() => {
 })
 
 const countFor = (d:string) => (eventsByDay.value[d]?.length || 0)
-const goDay = (d:string) => router.push({ path: '/tagesansicht', query: { datum: d } })
-const label = (d:string) => formatGermanLong(d) // "Montag, 10.11.2025"
+
+// label like "Montag, 10.11.2025"
+const label = (d:string) =>
+    new Date(d).toLocaleDateString('de-CH', {
+      weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
+    })
+
+// scroll to the table section for the clicked day
+function onGoDay(d:string) {
+  const el = document.getElementById(`d-${d}`)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+// switch to Tagesansicht with same date
+function onSwitch(to: 'tag'|'woche') {
+  if (to === 'tag') router.push({ path: '/tagesansicht', query: { datum: selectedDate.value } })
+}
 </script>
 
 <template>
-  <AppHeader v-model="selectedDate">
-    <template #right>
-      <!-- right of the datepicker -->
-      <NuxtLink
-          class="button is-action has-icon"
-          :to="{ path: '/tagesansicht', query: { datum: selectedDate } }"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M7 10h10v4H7z"/>
-        </svg>
-        Tagesansicht
-      </NuxtLink>
-    </template>
-  </AppHeader>
+  <AppHeader
+      viewMode="woche"
+      v-model="selectedDate"
+      :days="days"
+      :countFor="countFor"
+      @goDay="onGoDay"
+      @switchView="onSwitch"
+  />
 
   <div class="container">
-    <!-- Day tiles under the date picker -->
-    <div class="flex gap-20 overflow-x-auto my-20 pb-10">
-      <a
-          v-for="d in days"
-          :key="d"
-          :href="`#d-${d}`"
-          class="button is-tab"
-          :class="{ 'is-active': d === selectedDate }"
-      >
-        <div class="text-sm mr-10">
-          {{ new Date(d).toLocaleDateString('de-CH', { day:'2-digit', month:'2-digit' }) }}
-        </div>
-        <div class="font-semibold">
-          {{ countFor(d) }} {{ countFor(d) === 1 ? 'Event' : 'Events' }}
-        </div>
-      </a>
-    </div>
-
-    <!-- 7 tables -->
-    <section v-for="(d, idx) in days" :key="d" :id="`d-${d}`" class="my-60">
-      <h2 class="text-2xl font-bold text-gray-900 mb-20">{{ label(d) }}</h2>
-
+    <section
+        v-for="d in days"
+        :key="d"
+        :id="`d-${d}`"
+        class="my-60"
+    >
+      <h2 class="text-2xl font-bold text-gray-900 mb-20">
+        {{ label(d) }}
+      </h2>
       <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" />
       <NoEvents v-else />
-
-      <!-- Switch to Tagesansicht for this day (under every table) -->
-      <div class="mt-20">
-        <button class="button is-action" @click="goDay(d)">
-          Tagesansicht für diesen Tag
-        </button>
-      </div>
+      <button
+          class="button is-action has-icon lg:hidden mt-15"
+          @click="$router.push({ path: '/tagesansicht', query: { datum: d } })">
+              <span class="arrow-icon">
+                <component :is="IconArrowEast" data-symbol="arrow-east" />
+              </span>
+        Tagesansicht
+      </button>
     </section>
+    <!-- Week paging controls -->
+    <div class="flex flex-wrap justify-center items-center gap-20 my-40">
+      <button
+          class="button !px-20 is-action has-icon"
+          @click="shiftWeek(-7)"
+      >
+        <span class="arrow-icon" style="transform: rotate(90deg);">
+          <component :is="IconCaret" data-symbol="caret" />
+        </span>
+        Vorherige Woche
+      </button>
+      <button
+          class="button !px-20 is-action has-icon"
+          @click="shiftWeek(7)"
+      >
+        Nächste Woche
+        <span class="arrow-icon" style="transform: rotate(-90deg);">
+          <component :is="IconCaret" data-symbol="caret" />
+        </span>
+      </button>
+    </div>
+    <div class="my-30 text-gray-700">
+      Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen. Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
+    </div>
   </div>
 
   <hr class="h-[4px] border-none bg-green-600" />

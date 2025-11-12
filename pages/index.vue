@@ -1,11 +1,9 @@
-<!-- pages/index.vue -->
 <script setup lang="ts">
-if (process.server) {
-  await navigateTo('/tagesansicht', { redirectCode: 302 })
-} else {
-  const router = useRouter()
-  onMounted(() => router.replace('/tagesansicht'))
-}
+const router = useRouter()
+const route = useRoute()
+onMounted(() => {
+  router.replace({ path: '/tagesansicht', query: route.query })
+})
 </script>
 
-<template></template>
+<template />

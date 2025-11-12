@@ -1,4 +1,3 @@
-<!-- pages/tagesansicht.vue -->
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
@@ -11,37 +10,33 @@ const router = useRouter()
 const defaultIso = new Date().toISOString().slice(0,10)
 const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
 
-// normalize + keep in query (stays on /tagesansicht)
+// normalize + reflect in query
 watch(selectedDate, (d) => {
   const n = normalizeISODateString(d) || defaultIso
   if (n !== d) selectedDate.value = n
   router.replace({ path: '/tagesansicht', query: { ...route.query, datum: n } })
 })
 
-// fetch data
+// fetch
 const { fetchEvents, fetchAnreise, fetchTimedInfo } = useBsApi()
-const { data: eventsRaw }  = await useAsyncData('events-day', fetchEvents)
-const { data: anreiseRaw } = await useAsyncData('anreise-day', fetchAnreise)
-const { data: infoTRaw }   = await useAsyncData('infoT-day',  fetchTimedInfo)
+const { data: eventsRaw }  = await useAsyncData('events', fetchEvents)
+const { data: anreiseRaw } = await useAsyncData('anreise', fetchAnreise)
+const { data: infoTRaw }   = await useAsyncData('infoT',  fetchTimedInfo)
 
-// computed filters
+// filters
 const { filterEventsByDate, filterTimedInfoCoveringDate } = useFilters()
 const events = computed(() => filterEventsByDate(eventsRaw.value || [], selectedDate.value))
 const timedInfosForDay = computed(() => filterTimedInfoCoveringDate(infoTRaw.value || [], selectedDate.value))
 
 // warning names
 const warningNames = computed<string[]>(() => {
-  const names = new Set((events.value || [])
-      .filter((e:any) => e.sperrung === 'ja')
-      .map((e:any) => e.name))
+  const names = new Set((events.value || []).filter((e:any) => e.sperrung === 'ja').map((e:any) => e.name))
   return Array.from(names)
 })
 
-// info texts (HTML)
+// info texts
 const infoTexts = computed<string[]>(() => {
-  const set = new Set((events.value || [])
-      .map((e:any) => (e.info_text_html || '').trim())
-      .filter(Boolean))
+  const set = new Set((events.value || []).map((e:any) => (e.info_text_html || '').trim()).filter(Boolean))
   return Array.from(set)
 })
 
@@ -58,7 +53,6 @@ const anreiseItem = computed(() => {
   )
 })
 
-// icons
 const iconUrl = (file: string) => `icons/${file}`
 const iconFileByTransport = {
   Velo: 'bicycle.svg', Bus: 'bus.svg', Tram: 'tram.svg',
@@ -67,23 +61,21 @@ const iconFileByTransport = {
 const iconSrcMap = computed<Record<string, string>>(
     () => Object.fromEntries(Object.entries(iconFileByTransport).map(([k,f]) => [k, iconUrl(f)]))
 )
+
+// switch handler (go to Wochenansicht)
+function onSwitch(to: 'tag'|'woche') {
+  if (to === 'woche') {
+    router.push({ path: '/wochenansicht', query: { datum: selectedDate.value } })
+  }
+}
 </script>
 
 <template>
-  <AppHeader v-model="selectedDate">
-    <template #right>
-      <!-- right of the datepicker -->
-      <NuxtLink
-          class="button is-action has-icon"
-          :to="{ path: '/wochenansicht', query: { datum: selectedDate } }"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3 4h18v2H3zm0 7h18v2H3zm0 7h18v2H3z"/>
-        </svg>
-        Wochenansicht
-      </NuxtLink>
-    </template>
-  </AppHeader>
+  <AppHeader
+      viewMode="tag"
+      v-model="selectedDate"
+      @switchView="onSwitch"
+  />
 
   <div class="container">
     <div class="my-60">
