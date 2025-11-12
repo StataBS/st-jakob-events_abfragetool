@@ -39,3 +39,12 @@ export const fmtDE = (d?: string) => {
     const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
     return `${dt.getDate()}. ${months[dt.getMonth()]} ${dt.getFullYear()}`;
 };
+
+export function formatGermanLong(iso: string): string {
+    const dt = new Date(iso + 'T00:00:00Z')
+    const weekday = dt.toLocaleDateString('de-CH', { weekday: 'long' })
+    const date = dt.toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    // Capitalize first letter of weekday (some locales already do)
+    const w = weekday.charAt(0).toUpperCase() + weekday.slice(1)
+    return `${w}, ${date}`
+}

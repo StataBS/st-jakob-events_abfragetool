@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   ],
 
   app: {
-    baseURL: '/stj-eventverkehr/',
+    baseURL: '/',
     head: {
       htmlAttrs: { lang: 'de' },
       meta: [
