@@ -46,9 +46,10 @@ const visibleColumns = computed(() =>
       <img
           :src="'icons/tickets.svg'"
           :alt="'Ticket verfügbar'"
-          class="inline-block ml-2 align-text-bottom"
+          class="inline-block ml-10 align-text-bottom"
           loading="lazy"
           decoding="async"
+          title="Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert."
       />
     </template>
   </Table>
