@@ -76,7 +76,7 @@ const onSwitch = () => emit('switchView', targetMode.value)
           <DatePicker v-model="selectedDate" />
 
           <!-- switch sits directly right of the date input -->
-          <button v-if="props.viewMode === 'tag'" class="button is-action has-icon lg:hidden" @click="onSwitch">
+          <button class="button is-action has-icon lg:hidden" @click="onSwitch">
             <span class="arrow-icon">
               <component :is="IconArrowEast" data-symbol="arrow-east" />
             </span>
