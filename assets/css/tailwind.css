@@ -75,7 +75,9 @@ body {
     &.has-header-visible {
       ---base-sticky-top: var(--page-header-height);
     }
-
+    
+    a { color: #146c8b;
+  } 
     a:hover { color: #1e4557; }
   }
 
