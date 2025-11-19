@@ -13,9 +13,9 @@
   }
 
   .inline-link {
-    @apply text-blue-500 border-b border-b-gray-300;
-    @apply hover:text-blue-900 hover:border-b-blue-900;
-    @apply visited:text-purple-600 visited:border-b-purple-600;
+    @apply text-blue-500;
+    @apply hover:text-blue-900;
+    @apply visited:text-blue-500;
     @apply active:text-blue-700;
   }
 }
