@@ -76,13 +76,6 @@ body {
       ---base-sticky-top: var(--page-header-height);
     }
 
-    a {
-      @apply underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 5px;
-      text-decoration-color: #bababa;
-      color: #146c8b;
-    }
     a:hover { color: #1e4557; }
   }
 
