@@ -13,11 +13,11 @@
     @apply w-full border-collapse;
     th,
     td {
-      @apply p-10;
-      @apply text-left align-top;
+      @apply p-5;
+      @apply text-left;
     }
     thead {
-      @apply border-b-2 border-b-body text-base text-primary-600;
+      @apply border-b-1 border-b-body text-base text-primary-600;
       th {
         @apply pb-5;
       }
