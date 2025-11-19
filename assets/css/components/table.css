@@ -61,7 +61,7 @@
       td p { @apply not-last:mb-10; }
 
       &.table--header-only {
-        @apply mobile-only:border-t-2 mobile-only:border-b-0 mobile-only:border-body;
+        @apply mobile-only:border-t mobile-only:border-b-0 mobile-only:border-body;
         thead {
           @apply mobile-only:block mobile-only:border-b-0;
         }
