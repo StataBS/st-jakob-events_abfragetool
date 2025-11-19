@@ -46,7 +46,6 @@
     }
 
     &.has-mobile-style {
-      @apply mobile-only:border-t;
       thead { @apply mobile-only:hidden; }
       tbody th,
       tbody tr,
