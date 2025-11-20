@@ -5,7 +5,7 @@
     }
 
     .box__header {
-        @apply flex flex-wrap items-baseline mr-20;
+        @apply flex flex-wrap items-baseline mr-30;
     }
 
     .box__title {
