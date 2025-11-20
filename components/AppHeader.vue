@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import IconArrowEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-east'
+import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconArrowSouth from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-south'
+import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
 
 type ViewMode = 'tag' | 'woche'
 
 const props = defineProps<{
   viewMode: ViewMode
-  // v-model date (ISO: YYYY-MM-DD)
   modelValue: string
-  // Only needed for Wochenansicht (7-day strip)
   days?: string[]
   countFor?: (d: string) => number
 }>()
@@ -17,6 +16,7 @@ const emit = defineEmits<{
   (e: 'update:modelValue', v: string): void
   (e: 'switchView', to: ViewMode): void
   (e: 'goDay', iso: string): void
+  (e: 'shift', deltaDays: number): void
 }>()
 
 const link =
@@ -28,7 +28,6 @@ const selectedDate = computed({
   set: (v: string) => emit('update:modelValue', v),
 })
 
-// computed week label (visual range) for Wochenansicht
 const fmtCH = (d: Date, opts: Intl.DateTimeFormatOptions) =>
     d.toLocaleDateString('de-CH', opts)
 
@@ -37,17 +36,31 @@ const weekRange = computed(() => {
   const start = new Date(props.modelValue)
   const end = new Date(start)
   end.setDate(start.getDate() + 6)
-  // Example: 10.–16.11.2025
   const startStr = fmtCH(start, { day: '2-digit' })
-  const endStr = fmtCH(end, { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const endStr = fmtCH(end, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
   return `${startStr}.–${endStr}`
 })
 
-// toggle target + label
-const targetMode = computed<ViewMode>(() => (props.viewMode === 'woche' ? 'tag' : 'woche'))
-const switchLabel = computed(() => (props.viewMode === 'woche' ? 'Tagesansicht' : 'Wochenansicht'))
+const targetMode = computed<ViewMode>(() =>
+    props.viewMode === 'woche' ? 'tag' : 'woche',
+)
+const switchLabel = computed(() =>
+    props.viewMode === 'woche' ? 'Tagesansicht' : 'Wochenansicht',
+)
 const onSwitch = () => emit('switchView', targetMode.value)
 
+// prev/next logic for header buttons
+const prevAria = computed(() =>
+    props.viewMode === 'woche' ? 'Vorherige Woche' : 'Vorheriger Tag',
+)
+const nextAria = computed(() =>
+    props.viewMode === 'woche' ? 'Nächste Woche' : 'Nächster Tag',
+)
+const shiftBy = (delta: number) => emit('shift', delta)
 </script>
 
 <template>
@@ -71,17 +84,53 @@ const onSwitch = () => emit('switchView', targetMode.value)
           Veranstaltungen im Raum St. Jakob
         </h1>
 
-        <!-- Date input + switch -->
-        <div class="mt-15 flex items-center gap-10">
-          <DatePicker v-model="selectedDate" />
+        <!-- Date input + arrows + switch -->
+        <div class="mt-15">
+          <div class="flex flex-wrap items-center gap-20">
+            <!-- group: prev | DatePicker | next (never splits) -->
+            <div class="flex items-center gap-5 shrink-0">
+              <!-- previous day/week -->
+              <button
+                  type="button"
+                  class="button is-action is-icon-only shrink-0"
+                  @click="shiftBy(viewMode === 'woche' ? -7 : -1)"
+                  :aria-label="prevAria"
+                  :title="prevAria"
+              >
+                <span class="arrow-icon" style="transform: rotate(90deg);">
+                  <component :is="IconCaret" data-symbol="caret" />
+                </span>
+              </button>
 
-          <!-- switch sits directly right of the date input -->
-          <button class="button is-action has-icon lg:hidden" @click="onSwitch">
-            <span class="arrow-icon">
-              <component :is="IconArrowEast" data-symbol="arrow-east" />
-            </span>
-            {{ switchLabel }}
-          </button>
+              <div class="w-[260px] max-w-full">
+                <DatePicker v-model="selectedDate" class="w-full" />
+              </div>
+
+              <!-- next day/week -->
+              <button
+                  type="button"
+                  class="button is-action is-icon-only shrink-0"
+                  @click="shiftBy(viewMode === 'woche' ? 7 : 1)"
+                  :aria-label="nextAria"
+                  :title="nextAria"
+              >
+                <span class="arrow-icon" style="transform: rotate(-90deg);">
+                  <component :is="IconCaret" data-symbol="caret" />
+                </span>
+              </button>
+            </div>
+
+            <!-- single switch button: same line if space, else wraps below -->
+            <button
+                class="button is-action has-icon shrink-0 !px-10"
+                @click="onSwitch"
+            >
+              <span class="arrow-icon">
+                <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
+              </span>
+              {{ switchLabel }}
+            </button>
+          </div>
         </div>
         <div
             v-if="props.viewMode === 'woche' && props.days?.length"
@@ -94,21 +143,19 @@ const onSwitch = () => emit('switchView', targetMode.value)
               class="button is-action !no-underline w-full max-w-[250px]"
               :class="{ 'is-active': d === props.selectedDate }"
           >
-            <div
-                class="flex w-full items-center justify-between md:flex-col md:items-start md:gap-2 md:max-w-[300px]"
-            >
+            <div class="flex w-full items-center justify-between md:flex-col md:items-start md:gap-2 md:max-w-[300px]">
               <!-- Arrow + date -->
               <div class="flex items-center gap-8">
                 <span class="arrow-icon shrink-0">
                   <component :is="IconArrowSouth" data-symbol="arrow-south" />
                 </span>
-                <span class="font-medium leading-none">
+                <span class="font-medium leading-none text-inherit">
                   {{ new Date(d).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit' }) }}
                 </span>
               </div>
 
               <!-- Count -->
-              <span class="text-sm text-gray-700 md:mt-2 leading-none">
+              <span class="text-sm text-inherit md:mt-2 ml-5 leading-none">
                 {{ props.countFor ? props.countFor(d) : 0 }}
                 {{ props.countFor && props.countFor(d) === 1 ? 'Event&#8199;' : 'Events' }}
               </span>
