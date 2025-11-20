@@ -9,7 +9,7 @@ const today = new Date().toISOString().slice(0, 10)
       type="date"
       :value="model || today"
       @change="e => (model = (e.target as HTMLInputElement).value)"
-      class="input w-full md:w-1/2"
+      class="input w-full"
       aria-label="Datum wählen"
   />
 </template>
