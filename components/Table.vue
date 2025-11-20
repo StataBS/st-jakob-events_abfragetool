@@ -26,7 +26,16 @@ const props = withDefaults(defineProps<{
 
     <thead>
     <tr>
-      <th v-for="col in columns" :key="col.key" :class="col.thClass">
+      <th
+          v-for="col in columns"
+          :key="col.key"
+          :class="[
+            'table__col',
+            `table__col--${col.key}`,
+            col.hidden ? 'table__col--hidden' : '',
+            col.thClass
+          ]"
+      >
         {{ col.label }}
       </th>
     </tr>
@@ -41,9 +50,13 @@ const props = withDefaults(defineProps<{
           v-for="col in columns"
           :key="col.key"
           :data-head-label="col.label"
-          :class="col.tdClass"
+          :class="[
+            'table__col',
+            `table__col--${col.key}`,
+            col.hidden ? 'table__col--hidden' : '',
+            col.tdClass
+          ]"
       >
-        <!-- Per-column override slot: <template #cell-<key>> -->
         <slot
             :name="`cell-${col.key}`"
             :row="row"
@@ -55,13 +68,12 @@ const props = withDefaults(defineProps<{
       </td>
     </tr>
 
-    <!-- Empty state row (used by NoEvents) -->
     <tr v-if="!rows || rows.length === 0">
       <td
           v-for="col in columns"
           :key="col.key"
           :data-head-label="col.label"
-          :class="col.tdClass"
+          :class="['table__col', `table__col--${col.key}`, col.tdClass]"
       />
     </tr>
     </tbody>

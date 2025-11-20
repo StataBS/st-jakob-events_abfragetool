@@ -5,7 +5,7 @@ import { computed } from 'vue'
 type Item = Record<string, unknown>
 const props = withDefaults(defineProps<{ items?: Item[] }>(), { items: () => [] })
 
-type Column = { key: string; label: string; always?: boolean }
+type Column = { key: string; label: string; always?: boolean; hidden?: boolean }
 
 const columns: Column[] = [
   { key: 'name',      label: 'Name', always: true },
@@ -18,20 +18,24 @@ const columns: Column[] = [
 const isBlank = (v: unknown) =>
     v == null || (typeof v === 'string' && v.trim() === '')
 
-const visibleColumns = computed(() =>
-    columns.filter(col =>
-        col.always || props.items.some(row => !isBlank((row as Item)[col.key]))
-    )
+const enhancedColumns = computed(() =>
+    columns.map(col => {
+      const allBlank = props.items.every(row => isBlank((row as Item)[col.key]))
+      return {
+        ...col,
+        hidden: !col.always && allBlank,   // keep column but mark it “hidden”
+      }
+    })
 )
 </script>
 
 <template>
-  <Table :columns="visibleColumns" :rows="items">
+  <Table :columns="enhancedColumns" :rows="items">
     <!-- Custom render for the Name column -->
     <template #cell-name="{ row, value }">
-      <template v-if="row.Link || row.link">
+      <template v-if="row.link">
         <a
-            :href="(row.Link as string) || (row.link as string)"
+            :href="row.link as string"
             target="_blank"
             rel="noopener"
         >
@@ -44,6 +48,7 @@ const visibleColumns = computed(() =>
 
       <!-- Tickets icon if Ticketintegration is truthy -->
       <img
+          v-if="row.ticketintegration"
           :src="'icons/tickets.svg'"
           :alt="'Ticket verfügbar'"
           class="inline-block ml-10 align-text-bottom"
