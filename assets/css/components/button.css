@@ -107,6 +107,12 @@
     }
   }
 
+  .button.is-action.is-icon-only {
+    @apply inline-flex items-center justify-center;
+    @apply px-10 py-10;        /* smaller than the default px-20 */
+    @apply rounded-[30px];     /* or 9999px if you want perfect circles */
+  }
+
   .button.is-super {
     /* Basics */
     @apply rounded-[40px] text-base font-bold py-20 pl-20 pr-40 inline-flex items-center gap-20;
