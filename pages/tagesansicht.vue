@@ -10,6 +10,21 @@ const router = useRouter()
 const defaultIso = new Date().toISOString().slice(0,10)
 const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
 
+// shift by +/- N days (used by AppHeader arrows)
+function shiftDay(delta: number) {
+  const base = new Date(selectedDate.value)
+  base.setDate(base.getDate() + delta)
+  const nextIso = base.toISOString().slice(0, 10)
+  selectedDate.value = nextIso
+}
+
+// normalize + reflect in query
+watch(selectedDate, (d) => {
+  const n = normalizeISODateString(d) || defaultIso
+  if (n !== d) selectedDate.value = n
+  router.replace({ path: '/tagesansicht', query: { ...route.query, datum: n } })
+})
+
 // normalize + reflect in query
 watch(selectedDate, (d) => {
   const n = normalizeISODateString(d) || defaultIso
@@ -56,7 +71,7 @@ const anreiseItem = computed(() => {
 const iconUrl = (file: string) => `icons/${file}`
 const iconFileByTransport = {
   Velo: 'bicycle.svg', Bus: 'bus.svg', Tram: 'tram.svg',
-  Zug: 'train.svg', Auto: 'car.svg', Barrierefrei: 'accessibility.svg',
+  Zug: 'train.svg', Auto: 'car.svg', Barrierefrei: 'accessibility-sign.svg',
 } as const
 const iconSrcMap = computed<Record<string, string>>(
     () => Object.fromEntries(Object.entries(iconFileByTransport).map(([k,f]) => [k, iconUrl(f)]))
@@ -75,6 +90,7 @@ function onSwitch(to: 'tag'|'woche') {
       viewMode="tag"
       v-model="selectedDate"
       @switchView="onSwitch"
+      @shift="shiftDay"
   />
 
   <div class="container">

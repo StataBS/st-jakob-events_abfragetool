@@ -2,7 +2,7 @@
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
 import { normalizeISODateString } from '~/composables/useDateUtils'
-import IconArrowEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-east'
+import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
 
 // helper to move the selected week by +/- 7 days
@@ -69,6 +69,7 @@ function onSwitch(to: 'tag'|'woche') {
       :countFor="countFor"
       @goDay="onGoDay"
       @switchView="onSwitch"
+      @shift="shiftWeek"
   />
 
   <div class="container">
@@ -78,24 +79,30 @@ function onSwitch(to: 'tag'|'woche') {
         :id="`d-${d}`"
         class="my-60"
     >
-      <h2 class="text-2xl font-bold text-gray-900 mb-20">
-        {{ label(d) }}
-      </h2>
+      <div class="flex items-center gap-10 min-w-[200px] mb-10">
+        <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
+          {{ label(d) }}
+        </h2>
+
+        <!-- icon-only Tagesansicht button (mobile only) -->
+        <button
+            class="button is-action is-icon-only lg:hidden shrink-0"
+            @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
+            :aria-label="`Tagesansicht für ${label(d)}`"
+        >
+      <span class="arrow-icon">
+        <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
+      </span>
+        </button>
+      </div>
+
       <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" />
       <NoEvents v-else />
-      <button
-          class="button is-action has-icon lg:hidden mt-15"
-          @click="$router.push({ path: '/tagesansicht', query: { datum: d } })">
-              <span class="arrow-icon">
-                <component :is="IconArrowEast" data-symbol="arrow-east" />
-              </span>
-        Tagesansicht
-      </button>
     </section>
     <!-- Week paging controls -->
     <div class="flex flex-wrap justify-center items-center gap-20 my-40">
       <button
-          class="button !px-20 is-action has-icon"
+          class="button !px-10 is-action has-icon"
           @click="shiftWeek(-7)"
       >
         <span class="arrow-icon" style="transform: rotate(90deg);">
@@ -104,7 +111,7 @@ function onSwitch(to: 'tag'|'woche') {
         Vorherige Woche
       </button>
       <button
-          class="button !px-20 is-action has-icon"
+          class="button !px-10 is-action has-icon"
           @click="shiftWeek(7)"
       >
         Nächste Woche
