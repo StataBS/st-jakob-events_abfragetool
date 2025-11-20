@@ -13,8 +13,7 @@
     @apply w-full border-collapse;
     th,
     td {
-      @apply p-5;
-      @apply text-left;
+      @apply p-5 text-left;
     }
     thead {
       @apply border-b border-b-body text-base text-primary-600;
@@ -81,7 +80,46 @@
   figure > .table ~ figcaption {
     @apply italic mt-5;
   }
+
   .table--header-only tbody {
     display: none;
   }
+
+  /* 👇 desktop column layout */
+  @media (min-width: 768px) {
+    .table {
+      table-layout: fixed;
+    }
+
+    /* Name: 0–30% */
+    .table .table__col--name {
+      width: 30%;
+    }
+
+    /* Start: 30–40% */
+    .table .table__col--start {
+      width: 10%;
+    }
+
+    /* Ende: 40–50% */
+    .table .table__col--ende {
+      width: 10%;
+    }
+
+    /* Ort: 50–70% */
+    .table .table__col--ort {
+      width: 20%;
+    }
+
+    /* Bemerkung: 70–100% */
+    .table .table__col--bemerkung {
+      width: 30%;
+    }
+  }
+  @media (min-width: 768px) {
+    .table .table__col--hidden {
+      visibility: hidden;  /* keeps width, hides content + header label */
+    }
+  }
+
 }
