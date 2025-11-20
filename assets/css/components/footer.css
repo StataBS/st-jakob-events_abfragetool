@@ -14,7 +14,7 @@
       }
 
       & .link {
-        @apply border-b border-white text-blue-700;
+        @apply text-blue-700;
 
         &.link--tall {
           @apply text-sm;
