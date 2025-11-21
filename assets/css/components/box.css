@@ -2,6 +2,9 @@
     .box {
         @apply relative my-30 rounded-large;
         @apply p-20 pr-30 text-gray-900 max-w-[610px] bg-green-50;
+        a {
+            @apply inline-link;
+        }
     }
 
     .box__header {
