@@ -52,6 +52,7 @@ const enhancedColumns = computed(() =>
           :src="'icons/tickets.svg'"
           :alt="'Ticket verfügbar'"
           class="inline-block ml-10 align-text-bottom"
+          style="width: 20px; height: 20px;"
           loading="lazy"
           decoding="async"
           title="Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert."
