@@ -149,7 +149,7 @@
     }
 
     & svg[data-symbol="caret"] {
-      animation: bounce-up 0.35s ease-out;
+      animation: bounce-down 0.35s ease-out;
     }
 
     & svg[data-symbol="mail"] {
@@ -183,7 +183,8 @@
       transform: translate(4px, -4px);
     }
 
-    & svg[data-symbol="arrow-south"] {
+    & svg[data-symbol="arrow-south"],
+    & svg[data-symbol="caret"] {
       transform: translateY(4px);
     }
   }

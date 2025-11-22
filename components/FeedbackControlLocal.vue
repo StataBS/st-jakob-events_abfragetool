@@ -5,115 +5,124 @@ import {
   PopoverPortal,
   PopoverRoot,
   PopoverTrigger,
-} from "reka-ui";
-import { ref } from "vue";
+} from 'reka-ui'
+import { ref } from 'vue'
 
 import IconMail from '@kanton-basel-stadt/designsystem/icons/symbol/mail'
 import IconSendMail from '@kanton-basel-stadt/designsystem/icons/symbol/send-mail'
+import IconCircleCheck from '@kanton-basel-stadt/designsystem/icons/symbol/circle-check'
+import IconCircleError from '@kanton-basel-stadt/designsystem/icons/symbol/circle-error'
+import IconBaselstab from '@kanton-basel-stadt/designsystem/icons/symbol/baselstab'
 
 interface InputProps {
-  defaultMail?: string;
+  defaultMail?: string
 }
 
 const props = withDefaults(defineProps<InputProps>(), {
-  defaultMail: "",
-});
+  defaultMail: '',
+})
 
-const feedbackText = ref("");
-const selectedRating = ref("");
-const emailAddress = ref(props.defaultMail);
-const isSubmitting = ref(false);
-const isSubmitted = ref(false);
-const errorMessage = ref("");
+const feedbackText = ref('')
+const selectedRating = ref('')
+const emailAddress = ref(props.defaultMail)
+const isSubmitting = ref(false)
+const isSubmitted = ref(false)
+const errorMessage = ref('')
 
 const ratings = [
-  { emoji: "😕", label: "Schlecht", value: "poor" },
-  { emoji: "😐", label: "Okay", value: "okay" },
-  { emoji: "🙂", label: "Gut", value: "good" },
-  { emoji: "😀", label: "Sehr gut", value: "great" },
-  { emoji: "🤩", label: "Ausgezeichnet", value: "excellent" },
-];
+  { emoji: '😕', label: 'Schlecht', value: 'poor' },
+  { emoji: '😐', label: 'Okay', value: 'okay' },
+  { emoji: '🙂', label: 'Gut', value: 'good' },
+  { emoji: '😀', label: 'Sehr gut', value: 'great' },
+  { emoji: '🤩', label: 'Ausgezeichnet', value: 'excellent' },
+]
 
 const submitFeedback = async () => {
-  // Clear any previous error
-  errorMessage.value = "";
+  errorMessage.value = ''
 
   if (!feedbackText.value.trim() || !emailAddress.value.trim()) {
-    errorMessage.value = "Bitte fülle Sie Textfeld und Mailadresse aus.";
-    return;
+    errorMessage.value = 'Bitte fülle Sie Textfeld und Mailadresse aus.'
+    return
   }
 
-  isSubmitting.value = true;
+  isSubmitting.value = true
 
   try {
-    await $fetch("/api/feedback", {
-      method: "POST",
+    await $fetch('/api/feedback', {
+      method: 'POST',
       body: {
         rating: selectedRating.value,
         message: feedbackText.value.trim(),
         email: emailAddress.value.trim(),
       },
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-    });
+    })
 
-    isSubmitting.value = false;
-    isSubmitted.value = true;
+    isSubmitting.value = false
+    isSubmitted.value = true
 
-    // Reset after a few seconds
     setTimeout(() => {
-      feedbackText.value = "";
-      selectedRating.value = "";
-      emailAddress.value = "";
-      isSubmitted.value = false;
-    }, 3000);
+      feedbackText.value = ''
+      selectedRating.value = ''
+      emailAddress.value = ''
+      isSubmitted.value = false
+    }, 3000)
   } catch (error) {
-    isSubmitting.value = false;
+    isSubmitting.value = false
     errorMessage.value =
-        "Feedback konnte nicht gesendet werden. Bitte versuchen Sie es später erneut.";
-    console.error("Failed to submit feedback:", error);
+        'Feedback konnte nicht gesendet werden. Senden Sie bitte eine Mail an st-jakob-eventverkehr@jsd.bs.ch'
+    console.error('Failed to submit feedback:', error)
   }
-};
+}
 
 const resetForm = () => {
-  feedbackText.value = "";
-  selectedRating.value = "";
-  emailAddress.value = "";
-  isSubmitted.value = false;
-  errorMessage.value = "";
-};
+  feedbackText.value = ''
+  selectedRating.value = ''
+  emailAddress.value = ''
+  isSubmitted.value = false
+  errorMessage.value = ''
+}
 </script>
 
 <template>
   <div class="feedback-wrapper">
     <PopoverRoot>
       <PopoverTrigger
-        class="button is-action has-icon !px-10"
-        aria-label="Feedback geben"
-    >
-        <span class="feedback-icon-wrapper">
-          <component :is="IconMail" data-symbol="mail" class="feedback-mail-icon" />
+          class="button is-action has-icon !px-10"
+          aria-label="Feedback geben"
+      >
+        <span class="inline-flex items-center justify-center">
+          <component :is="IconMail" data-symbol="mail" class="w-20 h-20" />
         </span>
         <span>Feedback</span>
       </PopoverTrigger>
 
       <PopoverPortal>
         <PopoverContent
-            class="feedback-content"
+            class="relative w-[360px] rounded-[12px] bg-white shadow-[0_10px_25px_#BABABA] border-0 p-25 animate-[popup_0.3s_cubic-bezier(0.16,1,0.3,1)]"
             side="top"
             align="end"
             :side-offset="8"
             :align-offset="-250"
         >
-          <PopoverClose class="feedback-close" aria-label="Schliessen" @click="resetForm">
+          <PopoverClose
+              class="absolute top-10 right-10 flex h-[28px] w-[28px] items-center justify-center text-lg font-bold cursor-pointer border-0 bg-transparent transition-colors duration-200 hover:text-blue-700"
+              aria-label="Schliessen"
+              @click="resetForm"
+          >
             <span>×</span>
           </PopoverClose>
 
-          <div v-if="!isSubmitted" class="feedback-container">
-            <h3 class="feedback-title">Teilen Sie Ihre Gedanken</h3>
-            <div class="feedback-rating">
-              <p class="text-sm font-medium text-gray-800">
+          <!-- Form -->
+          <div v-if="!isSubmitted" class="flex flex-col gap-20">
+            <h3 class="text-lg font-bold m-0">
+              Teilen Sie Ihre Gedanken
+            </h3>
+
+            <div class="flex flex-col gap-15">
+              <p class="text-sm font-medium">
                 Wie würden Sie Ihre Erfahrung bewerten?
               </p>
 
@@ -132,18 +141,29 @@ const resetForm = () => {
                 </button>
               </div>
             </div>
-            <div class="feedback-input-group">
-              <label for="feedback-text">Ist Ihnen etwas aufgefallen? Fehlt etwas?</label>
+
+            <div class="flex flex-col gap-10">
+              <label
+                  for="feedback-text"
+                  class="text-sm font-medium"
+              >
+                Ist Ihnen etwas aufgefallen? Fehlt etwas?
+              </label>
               <textarea
                   id="feedback-text"
                   v-model="feedbackText"
                   class="input w-full min-h-[100px]"
                   placeholder="Ihr Feedback hilft uns, besser zu werden..."
-              ></textarea>
+              />
             </div>
 
-            <div class="feedback-input-group">
-              <label for="feedback-email">E-Mail</label>
+            <div class="flex flex-col gap-10">
+              <label
+                  for="feedback-email"
+                  class="text-sm font-medium"
+              >
+                E-Mail
+              </label>
               <input
                   type="email"
                   id="feedback-email"
@@ -151,16 +171,22 @@ const resetForm = () => {
                   class="input w-full"
                   placeholder="Ihre@email.ch"
               />
-              <small class="feedback-input-help">Damit wir Sie erreichen können.</small>
+              <small class="text-xs inline-block text-gray-700">
+                Damit wir Sie erreichen können.
+              </small>
             </div>
 
-            <div v-if="errorMessage" class="feedback-error">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                   xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-                <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" />
-                <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" />
-              </svg>
+            <div
+                v-if="errorMessage"
+                class="mt-10 flex items-center gap-10 rounded-[6px] border border-red-600 bg-red-100 p-10 text-sm text-red-600 animate-[shake_0.5s_ease-in-out]"
+            >
+              <span class="inline-flex items-center justify-center mr-5">
+                <component
+                    :is="IconCircleError"
+                    data-symbol="circle-error"
+                    class="w-20 h-20"
+                />
+              </span>
               <span>{{ errorMessage }}</span>
             </div>
 
@@ -170,18 +196,21 @@ const resetForm = () => {
                 :disabled="isSubmitting"
             >
               <template v-if="isSubmitting">
-                <svg class="spinner" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="12" cy="12" r="10" stroke-width="4" stroke="currentColor"
-                          stroke-dasharray="30 60" />
-                </svg>
+                <span class="inline-flex h-20 w-20 items-center justify-center loading-spinner">
+                  <component
+                      :is="IconBaselstab"
+                      data-symbol="baselstab"
+                      class="w-20 h-20"
+                  />
+                </span>
                 <span>Wird gesendet...</span>
               </template>
               <template v-else>
-                <span class="feedback-icon-wrapper">
+                <span class="inline-flex items-center justify-center">
                   <component
                       :is="IconSendMail"
                       data-symbol="send-mail"
-                      class="feedback-send-icon"
+                      class="w-20 h-20"
                   />
                 </span>
                 <span>Feedback senden</span>
@@ -189,10 +218,20 @@ const resetForm = () => {
             </button>
           </div>
 
-          <div v-else class="feedback-success">
-            <div class="success-icon">✓</div>
-            <h3>Vielen Dank für Ihr Feedback!</h3>
-            <p>Wir schätzen Ihre Eingabe und werden sie nutzen, um unseren Service zu verbessern.</p>
+          <div v-else class="flex min-h-[200px] flex-col items-center justify-center gap-20 text-center">
+            <span class="inline-flex items-center justify-center mb-10">
+              <component
+                  :is="IconCircleCheck"
+                  data-symbol="circle-check"
+                  class="w-60 h-60 text-green-500"
+              />
+            </span>
+            <h3 class="text-lg font-bold m-0 text-green-500">
+              Vielen Dank für Ihr Feedback!
+            </h3>
+            <p class="text-sm m-0">
+              Wir schätzen Ihre Eingabe und werden sie nutzen, um unseren Service zu verbessern.
+            </p>
           </div>
         </PopoverContent>
       </PopoverPortal>
@@ -201,154 +240,17 @@ const resetForm = () => {
 </template>
 
 <style>
-:root {
-  --feedback-bg: white;
-  --feedback-shadow: rgba(0, 0, 0, 0.15);
-  --feedback-success: #10b981;
-  --feedback-error: #ef4444;
-}
-
-.feedback-content {
-  padding: 1.5rem;
-  background-color: var(--feedback-bg);
-  border-radius: 12px;
-  box-shadow: 0 10px 25px var(--feedback-shadow);
-  border: none;
-  width: 360px;
-  animation: popup 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.feedback-container {
-  flex-direction: column;
-  display: flex;
-  gap: 1.25rem;
-}
-
-.feedback-title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.feedback-rating {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.feedback-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.feedback-input-group label {
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.feedback-input-help {
-  font-size: 0.75rem;
-  display: inline-block;
-}
-
-.feedback-error {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid var(--feedback-error);
-  border-radius: 6px;
-  color: var(--feedback-error);
-  font-size: 0.875rem;
-  animation: shake 0.5s ease-in-out;
-}
-
-.feedback-error svg {
-  flex-shrink: 0;
-}
-
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
   }
-
   25% {
     transform: translateX(-4px);
   }
-
   75% {
     transform: translateX(4px);
   }
-}
-
-.spinner {
-  animation: spin 1s linear infinite;
-  width: 16px;
-  height: 16px;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.feedback-close {
-  height: 28px;
-  width: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.feedback-close:hover {
-  @apply text-blue-700;
-}
-
-.feedback-success {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 200px;
-  gap: 1rem;
-}
-
-.success-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: var(--feedback-success);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: bold;
-  animation: success-bounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.feedback-success h3 {
-  font-size: 1.125rem;
-  margin: 0;
-}
-
-.feedback-success p {
-  font-size: 0.875rem;
-  margin: 0;
 }
 
 @keyframes popup {
@@ -363,17 +265,8 @@ const resetForm = () => {
   }
 }
 
-@keyframes success-bounce {
-  0% {
-    transform: scale(0);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+.loading-spinner * {
+  transform-origin: center;
+  animation: rotateBaselStab 1.2s infinite linear;
 }
 </style>
