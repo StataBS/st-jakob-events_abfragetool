@@ -2,8 +2,10 @@
 import postcss from './postcss.config.js'
 import { resolve } from 'path'
 import { defineNuxtConfig } from 'nuxt/config'
+import {undefined} from "zod";
 
 export default defineNuxtConfig({
+  $development: undefined, $env: undefined, $meta: undefined, $production: undefined, $test: undefined,
   alias: {
     'tailwind-config': resolve(__dirname, './tailwind.config.ts'),
   },
@@ -12,6 +14,7 @@ export default defineNuxtConfig({
 
   modules: [
     'motion-v/nuxt',
+    '@dcc-bs/feedback-control.bs.js',
     '@nuxtjs/tailwindcss',
     ['@kanton-basel-stadt/designsystem/nuxt', {
       iconOptions: {
@@ -20,6 +23,12 @@ export default defineNuxtConfig({
     }],
     '@vite-pwa/nuxt',
   ],
+  "feedback-control.bs.js": {
+    repo: "Feedback_st-jakob-events",
+    owner: "DCC-BS",
+    project: "st-jakob-events_abfragetool",
+    githubToken: process.env.GITHUB_TOKEN,
+  },
 
   app: {
     baseURL: '/',
@@ -85,5 +94,5 @@ export default defineNuxtConfig({
     viewer: false,
   },
   css: ['~/assets/css/tailwind.css'],
-  postcss,
+  postcss
 })

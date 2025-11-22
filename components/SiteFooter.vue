@@ -5,6 +5,9 @@
   <footer class="footer print:hidden">
     <h1 class="sr-only">Fusszeile</h1>
     <div class="footer-container container">
+      <div>
+        <FeedbackControlLocal />
+      </div>
       <nav aria-label="Kontakt & Datenquellen">
         <ul class="links links--spaced">
           <li>
