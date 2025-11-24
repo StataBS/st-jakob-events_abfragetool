@@ -54,6 +54,10 @@ export default defineNuxtConfig({
 
   pwa: {
     registerType: 'autoUpdate',
+    strategies: 'injectManifest',
+    srcDir: 'public',
+    filename: 'sw.js',
+  
     manifest: {
       name: 'Veranstaltungen im Raum St. Jakob',
       short_name: 'Veranstaltungen',
@@ -64,16 +68,8 @@ export default defineNuxtConfig({
       background_color: '#ffffff',
       theme_color: '#00838f',
       icons: [
-        {
-          src: '/icons/pwa-192x192.png',
-          sizes: '192x192',
-          type: 'image/png',
-        },
-        {
-          src: '/icons/pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
+        { src: '/icons/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icons/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
         {
           src: '/icons/pwa-maskable-512x512.png',
           sizes: '512x512',
@@ -81,11 +77,6 @@ export default defineNuxtConfig({
           purpose: 'maskable',
         },
       ],
-    },
-    workbox: {
-    },
-    client: {
-      installPrompt: true,
     },
   },
 
