@@ -20,8 +20,7 @@ export default defineNuxtConfig({
       iconOptions: {
         compiler: 'vue3',
       }
-    }],
-    '@vite-pwa/nuxt',
+    }]
   ],
   "feedback-control.bs.js": {
     repo: "Feedback_st-jakob-events",
@@ -42,42 +41,6 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/icons/favicon.png' },
       ],
-    },
-  },
-
-  pwa: {
-    registerType: 'autoUpdate',
-    workbox: {},
-    manifest: {
-      name: 'Veranstaltungen im Raum St. Jakob',
-      short_name: 'Veranstaltungen',
-      lang: 'de',
-      start_url: '/',
-      scope: '/',
-      display: 'standalone',
-      background_color: '#ffffff',
-      theme_color: '#00838f',
-      icons: [
-        {
-          src: '/icons/pwa-192x192.png',
-          sizes: '192x192',
-          type: 'image/png',
-        },
-        {
-          src: '/icons/pwa-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
-        {
-          src: '/icons/pwa-maskable-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-          purpose: 'maskable',
-        },
-      ],
-    },
-    client: {
-      installPrompt: true, // enables custom "Install app" prompt helpers
     },
   },
 
