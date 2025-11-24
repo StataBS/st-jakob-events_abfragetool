@@ -26,8 +26,7 @@ export default defineNuxtConfig({
   "feedback-control.bs.js": {
     repo: "Feedback_st-jakob-events",
     owner: "DCC-BS",
-    project: "st-jakob-events_abfragetool",
-    githubToken: process.env.GITHUB_TOKEN,
+    project: "st-jakob-events_abfragetool"
   },
 
   app: {
@@ -85,6 +84,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    githubToken: process.env.GITHUB_TOKEN || '',
     public: {
       bsApiKey: process.env.BS_API_KEY || '',
     },
