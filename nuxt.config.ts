@@ -47,9 +47,7 @@ export default defineNuxtConfig({
 
   pwa: {
     registerType: 'autoUpdate',
-    workbox: {
-      navigateFallback: '/',     // fallback for SPA-style routing
-    },
+    workbox: {},
     manifest: {
       name: 'Veranstaltungen im Raum St. Jakob',
       short_name: 'Veranstaltungen',
