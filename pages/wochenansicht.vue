@@ -33,7 +33,7 @@ const start = computed(() => new Date(selectedDate.value))
 const days = computed(() => Array.from({length:7}, (_,i) => iso(addDays(start.value, i))))
 
 const { fetchEvents } = useBsApi()
-const { data: eventsRaw } = await useAsyncData('events', fetchEvents)
+const { data: eventsRaw } = await useAsyncData('events', fetchEvents, { server: false })
 const { filterEventsByDate } = useFilters()
 
 const eventsByDay = computed<Record<string, any[]>>(() => {

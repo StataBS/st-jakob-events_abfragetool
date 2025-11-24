@@ -34,9 +34,9 @@ watch(selectedDate, (d) => {
 
 // fetch
 const { fetchEvents, fetchAnreise, fetchTimedInfo } = useBsApi()
-const { data: eventsRaw }  = await useAsyncData('events', fetchEvents)
-const { data: anreiseRaw } = await useAsyncData('anreise', fetchAnreise)
-const { data: infoTRaw }   = await useAsyncData('infoT',  fetchTimedInfo)
+const { data: eventsRaw }  = await useAsyncData('events', fetchEvents,  { server: false })
+const { data: anreiseRaw } = await useAsyncData('anreise', fetchAnreise,  { server: false })
+const { data: infoTRaw }   = await useAsyncData('infoT',  fetchTimedInfo,  { server: false })
 
 // filters
 const { filterEventsByDate, filterTimedInfoCoveringDate } = useFilters()
