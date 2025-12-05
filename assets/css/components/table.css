@@ -1,4 +1,100 @@
 @layer components {
+  /* 1. Base table styling */
+  .table {
+    @apply w-full border-collapse;
+
+    caption {
+      @apply text-left font-bold mb-10 text-xl;
+    }
+
+    a {
+      @apply inline-link;
+    }
+
+    /* Base cells */
+    th,
+    td {
+      @apply p-5 text-left first:pl-0;
+    }
+
+    thead {
+      @apply border-b border-b-body text-base text-primary-600;
+
+      th {
+        @apply pb-5;
+      }
+    }
+
+    tbody {
+      tr {
+        @apply border-b;
+      }
+    }
+
+    /* 2. Mobile “card” layout modifier */
+    &.has-mobile-style {
+      thead {
+        @apply mobile-only:hidden;
+      }
+
+      tbody tr,
+      tbody th,
+      tbody td {
+        @apply mobile-only:block;
+      }
+
+      th,
+      td {
+        @apply mobile-only:px-0;
+      }
+
+      tbody tr {
+        @apply mobile-only:border-t mobile-only:border-b-0;
+      }
+
+      td[data-head-label]::before {
+        @apply mobile-only:content-[attr(data-head-label)]
+        mobile-only:block
+        mobile-only:text-xs
+        mobile-only:text-green-600
+        mobile-only:font-bold
+        mobile-only:mb-5;
+      }
+
+      td p {
+        @apply not-last:mb-10;
+      }
+
+      /* 3. Header-only variant on mobile */
+      &.table--header-only {
+        @apply mobile-only:border-t mobile-only:border-b-0 mobile-only:border-body;
+
+        thead {
+          @apply mobile-only:block mobile-only:border-b-0;
+
+          tr,
+          th {
+            @apply mobile-only:block;
+          }
+        }
+
+        caption {
+          @apply mobile-only:block
+          mobile-only:mb-0
+          mobile-only:pb-5
+          mobile-only:text-base
+          mobile-only:text-primary-600;
+        }
+      }
+    }
+  }
+
+  /* 4. Header-only: hide body everywhere */
+  .table--header-only tbody {
+    display: none;
+  }
+
+  /* 5. Figure + details context rules */
   details figure > .table {
     tbody {
       @apply border-b-0;
@@ -9,117 +105,39 @@
     }
   }
 
-  .table {
-    @apply w-full border-collapse;
-    th,
-    td {
-      @apply p-5 text-left;
-    }
-    thead {
-      @apply border-b border-b-body text-base text-primary-600;
-      th {
-        @apply pb-5;
-      }
-    }
-
-    tbody {
-      td,
-      th {
-        @apply p-5;
-      }
-      tr {
-        @apply border-b;
-      }
-    }
-    td,
-    th {
-      @apply first:pl-0;
-    }
-
-    caption {
-      @apply text-left font-bold mb-10 text-xl;
-    }
-
-    a {
-      @apply inline-link;
-    }
-
-    &.has-mobile-style {
-      thead { @apply mobile-only:hidden; }
-      tbody th,
-      tbody tr,
-      tbody td { @apply mobile-only:block; }
-      td, th { @apply mobile-only:px-0; }
-      tbody tr { @apply mobile-only:border-t; }
-
-      td[data-head-label]:before {
-        @apply mobile-only:content-[attr(data-head-label)] mobile-only:block mobile-only:text-xs mobile-only:text-green-600 mobile-only:font-bold mobile-only:mb-5;
-      }
-
-      td p { @apply not-last:mb-10; }
-
-      &.table--header-only {
-        @apply mobile-only:border-t mobile-only:border-b-0 mobile-only:border-body;
-        thead {
-          @apply mobile-only:block mobile-only:border-b-0;
-        }
-        thead tr,
-        thead th {
-          @apply mobile-only:block;
-        }
-        tbody {
-          @apply mobile-only:hidden;
-        }
-        caption {
-          @apply mobile-only:block mobile-only:mb-0 mobile-only:pb-5 mobile-only:text-base mobile-only:text-primary-600;
-        }
-      }
-    }
-  }
-
   figure > .table ~ figcaption {
     @apply italic mt-5;
   }
 
-  .table--header-only tbody {
-    display: none;
-  }
-
-  /* 👇 desktop column layout */
+  /* 6. Desktop layout */
   @media (min-width: 768px) {
     .table {
       table-layout: fixed;
     }
 
-    /* Name: 0–30% */
-    .table .table__col--name {
-      width: 30%;
+    /* Column widths (desktop only) */
+    .table__col--name {
+      width: 30%; /* 0–30% */
     }
 
-    /* Start: 30–40% */
-    .table .table__col--start {
-      width: 10%;
+    .table__col--start {
+      width: 10%; /* 30–40% */
     }
 
-    /* Ende: 40–50% */
-    .table .table__col--ende {
-      width: 10%;
+    .table__col--ende {
+      width: 10%; /* 40–50% */
     }
 
-    /* Ort: 50–70% */
-    .table .table__col--ort {
-      width: 20%;
+    .table__col--ort {
+      width: 20%; /* 50–70% */
     }
 
-    /* Bemerkung: 70–100% */
-    .table .table__col--bemerkung {
-      width: 30%;
+    .table__col--bemerkung {
+      width: 30%; /* 70–100% */
+    }
+
+    .table__col--hidden {
+      visibility: hidden; /* keep column width, hide content + header */
     }
   }
-  @media (min-width: 768px) {
-    .table .table__col--hidden {
-      visibility: hidden;  /* keeps width, hides content + header label */
-    }
-  }
-
 }
