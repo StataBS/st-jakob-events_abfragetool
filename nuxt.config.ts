@@ -73,6 +73,9 @@ export default defineNuxtConfig({
   tailwindcss: {
     viewer: false,
   },
-  css: ['~/assets/css/tailwind.css'],
+  css: [
+    'v-calendar/style.css',
+    '~/assets/css/tailwind.css'
+  ],
   postcss
 })

@@ -43,6 +43,24 @@ const eventsByDay = computed<Record<string, any[]>>(() => {
 
 const countFor = (d:string) => (eventsByDay.value[d]?.length || 0)
 
+const eventCounts = computed<Record<string, number>>(() => {
+  const result: Record<string, number> = {}
+  const src = eventsRaw.value || []
+
+  for (const e of src) {
+    const raw = e.datum_iso || e.datum || e.date
+    if (!raw) continue
+
+    const iso = String(raw).slice(0, 10)
+    if (!iso.match(/^\d{4}-\d{2}-\d{2}$/)) continue
+
+    result[iso] = (result[iso] || 0) + 1
+  }
+
+  return result
+})
+
+
 // label like "Montag, 10.11.2025"
 const label = (d:string) =>
     new Date(d).toLocaleDateString('de-CH', {
@@ -67,6 +85,7 @@ function onSwitch(to: 'tag'|'woche') {
       v-model="selectedDate"
       :days="days"
       :countFor="countFor"
+      :event-counts="eventCounts"
       @goDay="onGoDay"
       @switchView="onSwitch"
       @shift="shiftWeek"

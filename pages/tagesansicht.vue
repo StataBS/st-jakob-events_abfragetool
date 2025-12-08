@@ -38,6 +38,26 @@ const { data: eventsRaw }  = await useAsyncData('events', fetchEvents,  { server
 const { data: anreiseRaw } = await useAsyncData('anreise', fetchAnreise,  { server: false })
 const { data: infoTRaw }   = await useAsyncData('infoT',  fetchTimedInfo,  { server: false })
 
+// count events per ISO date (ADAPT field name!)
+const eventCounts = computed<Record<string, number>>(() => {
+  const result: Record<string, number> = {}
+  const src = eventsRaw.value || []
+
+  for (const e of src) {
+    // IMPORTANT: use the REAL date field from your API here:
+    // e.datum, e.datum_iso, e.startdatum, whatever it is
+    const raw = e.datum_iso || e.datum || e.date
+    if (!raw) continue
+
+    const iso = String(raw).slice(0, 10) // 'YYYY-MM-DD'
+    if (!iso.match(/^\d{4}-\d{2}-\d{2}$/)) continue
+
+    result[iso] = (result[iso] || 0) + 1
+  }
+
+  return result
+})
+
 // filters
 const { filterEventsByDate, filterTimedInfoCoveringDate } = useFilters()
 const events = computed(() => filterEventsByDate(eventsRaw.value || [], selectedDate.value))
@@ -89,6 +109,7 @@ function onSwitch(to: 'tag'|'woche') {
   <AppHeader
       viewMode="tag"
       v-model="selectedDate"
+      :event-counts="eventCounts"
       @switchView="onSwitch"
       @shift="shiftDay"
   />

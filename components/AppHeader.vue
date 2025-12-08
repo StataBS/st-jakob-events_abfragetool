@@ -10,6 +10,7 @@ const props = defineProps<{
   modelValue: string
   days?: string[]
   countFor?: (d: string) => number
+  eventCounts?: Record<string, number>   // NEW
 }>()
 
 const emit = defineEmits<{
@@ -103,7 +104,11 @@ const shiftBy = (delta: number) => emit('shift', delta)
               </button>
 
               <div class="w-[260px] max-w-full">
-                <DatePicker v-model="selectedDate" class="w-full" />
+                <DatePicker
+                    v-model="selectedDate"
+                    :event-counts="props.eventCounts"
+                    class="w-full"
+                />
               </div>
 
               <!-- next day/week -->
