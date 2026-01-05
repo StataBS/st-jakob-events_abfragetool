@@ -47,9 +47,6 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     githubToken: process.env.GITHUB_TOKEN || '',
-    public: {
-      bsApiKey: process.env.BS_API_KEY || '',
-    },
   },
 
   pwa: {

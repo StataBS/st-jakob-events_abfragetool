@@ -3,12 +3,8 @@ const ANREISE_URL  = 'https://data.bs.ch/api/explore/v2.1/catalog/datasets/10042
 const INFO_T_URL   = 'https://data.bs.ch/api/explore/v2.1/catalog/datasets/100464/exports/json'
 
 export function useBsApi() {
-    const { public: { bsApiKey } } = useRuntimeConfig()
-
     const fetchJson = async (url: string) => {
-        const q = new URL(url)
-        if (bsApiKey) q.searchParams.set('apikey', bsApiKey)
-        return await $fetch<any[]>(q.toString())
+        return await $fetch<any[]>(url)
     }
 
     return {
