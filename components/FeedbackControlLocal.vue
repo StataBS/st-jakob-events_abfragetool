@@ -54,9 +54,7 @@ const submitFeedback = async () => {
         rating: selectedRating.value,
         message: feedbackText.value.trim(),
         email: emailAddress.value.trim(),
-      },
-      headers: {
-        'Content-Type': 'application/json',
+        attachments: [],
       },
     })
 

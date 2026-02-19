@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
 @import './brand-colors.css';
 @import './components/page.css';
 @import './components/button.css';
@@ -19,9 +22,171 @@
 @import './components/map-image.css';
 @import './components/input.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --spacing-*: initial;
+  --spacing-0: 0px;
+  --spacing-1: 1px;
+  --spacing-2: 2px;
+  --spacing-3: 3px;
+  --spacing-5: 5px;
+  --spacing-10: 10px;
+  --spacing-15: 15px;
+  --spacing-20: 20px;
+  --spacing-25: 25px;
+  --spacing-30: 30px;
+  --spacing-40: 40px;
+  --spacing-50: 50px;
+  --spacing-60: 60px;
+  --spacing-70: 70px;
+  --spacing-80: 80px;
+  --spacing-90: 90px;
+  --spacing-100: 100px;
+  --spacing-120: 120px;
+  --spacing-140: 140px;
+  --spacing-220: 220px;
+
+  --breakpoint-*: initial;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1210px;
+  --breakpoint-xxl: 2050px;
+  --breakpoint-xxxl: 3200px;
+
+  --color-white: #ffffff;
+  --color-body: black;
+
+  --color-green-50: #F2F7F3;
+  --color-green-100: #DDECDE;
+  --color-green-200: #B8D6BE;
+  --color-green-300: #7BB589;
+  --color-green-400: #469A5D;
+  --color-green-500: #2A9749;
+  --color-green-600: #32834A;
+  --color-green-700: #2A713F;
+  --color-green-800: #245333;
+  --color-green-900: #1F402A;
+
+  --color-blue-50: #F2FDFF;
+  --color-blue-100: #DBF9FF;
+  --color-blue-200: #B6EDFA;
+  --color-blue-300: #85D4EE;
+  --color-blue-400: #51b9da;
+  --color-blue-500: #079BCA;
+  --color-blue-600: #0E81A7;
+  --color-blue-700: #146C8B;
+  --color-blue-800: #1B5268;
+  --color-blue-900: #1E4557;
+
+  --color-purple-50: #F9F6FD;
+  --color-purple-100: #F4EDFA;
+  --color-purple-200: #E8DAF4;
+  --color-purple-300: #D7BDEA;
+  --color-purple-400: #C196DC;
+  --color-purple-500: #A56CC9;
+  --color-purple-600: #9156B4;
+  --color-purple-700: #723D8E;
+  --color-purple-800: #5F3375;
+  --color-purple-900: #512E61;
+
+  --color-red-50: #FFF1EF;
+  --color-red-100: #FFE0DC;
+  --color-red-200: #FFC7BF;
+  --color-red-300: #FF9F92;
+  --color-red-400: #FF6854;
+  --color-red-500: #FF3A1F;
+  --color-red-600: #FF1E00;
+  --color-red-700: #DB1A00;
+  --color-red-800: #B81600;
+  --color-red-900: #941908;
+
+  --color-gray-20: #F8F8F8;
+  --color-gray-50: #F2F2F2;
+  --color-gray-100: #EBEBEB;
+  --color-gray-200: #E3E3E3;
+  --color-gray-300: #BABABA;
+  --color-gray-400: #A5A5A5;
+  --color-gray-500: #949494;
+  --color-gray-600: #777777;
+  --color-gray-700: #535353;
+  --color-gray-800: #403F3F;
+  --color-gray-900: #333333;
+
+  --color-primary-50: #F2F7F3;
+  --color-primary-100: #DDECDE;
+  --color-primary-200: #B8D6BE;
+  --color-primary-300: #7BB589;
+  --color-primary-400: #469A5D;
+  --color-primary-500: #2A9749;
+  --color-primary-600: #32834A;
+  --color-primary-700: #2A713F;
+  --color-primary-800: #245333;
+  --color-primary-900: #1F402A;
+
+  --font-*: initial;
+  --font-sans: 'Inter', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+
+  --text-*: initial;
+  --text-xs: 12px;
+  --text-xs--line-height: 18px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 22px;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 30px;
+  --text-3xl--line-height: 34px;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 40px;
+  --text-5xl: 48px;
+  --text-5xl--line-height: 48px;
+  --text-6xl: 60px;
+  --text-6xl--line-height: 60px;
+  --text-7xl: 72px;
+  --text-7xl--line-height: 72px;
+  --text-8xl: 96px;
+  --text-8xl--line-height: 96px;
+  --text-9xl: 128px;
+  --text-9xl--line-height: 128px;
+
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --leading-*: initial;
+  --leading-none: 1;
+  --leading-tight: 1.2;
+  --leading-snug: 1.3;
+  --leading-normal: 1.4;
+
+  --radius-*: initial;
+  --radius: 4px;
+  --radius-none: 0px;
+  --radius-full: 9999px;
+  --radius-large: 10px;
+
+  --shadow-purple-600: 0 0 10px 0 #9156B4;
+  --duration-250: 250ms;
+}
+
+@utility max-w-reduced {
+  max-width: 970px;
+}
+@utility max-w-prose {
+  max-width: 836px;
+}
+@utility max-w-hero {
+  max-width: 560px;
+}
+
+@custom-variant mobile-only (@media screen and (max-width: 768px));
+@custom-variant not-last (&:not(:last-child));
+@custom-variant not-first (&:not(:first-child));
 
 @font-face {
   font-family: 'Inter';
@@ -68,7 +233,7 @@ body {
 
     ---base-sticky-top: 48px;
 
-    @screen md {
+    @media (width >= 768px) {
       ---base-sticky-top: 0px;
     }
 

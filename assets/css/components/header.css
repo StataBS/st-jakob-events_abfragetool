@@ -16,7 +16,7 @@
       'console console' auto /
       1fr auto;
 
-    @screen md {
+    @media (width >= 768px) {
       grid-template:
         'logo console controls' 1fr /
         1fr 1fr 1fr;
