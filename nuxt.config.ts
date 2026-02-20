@@ -1,32 +1,30 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import postcss from './postcss.config.js'
-import { resolve } from 'path'
 import { defineNuxtConfig } from 'nuxt/config'
-import {undefined} from "zod";
+import designSystemPlugin from '@kanton-basel-stadt/designsystem/vite'
+
+const allPlugins = designSystemPlugin({
+  iconOptions: {
+    compiler: 'vue3',
+  },
+})
+const designSystemPlugins = (Array.isArray(allPlugins) ? allPlugins : [allPlugins])
+  .filter((p: any) => p.name !== '@kanton-basel-stadt/designsystem/postcss-tailwind')
 
 export default defineNuxtConfig({
-  $development: undefined, $env: undefined, $meta: undefined, $production: undefined, $test: undefined,
-  alias: {
-    'tailwind-config': resolve(__dirname, './tailwind.config.ts'),
-  },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
+  extends: [
+    'github:DCC-BS/nuxt-layers/feedback-control',
+  ],
+
   modules: [
     'motion-v/nuxt',
-    '@dcc-bs/feedback-control.bs.js',
-    '@nuxtjs/tailwindcss',
-    ['@kanton-basel-stadt/designsystem/nuxt', {
-      iconOptions: {
-        compiler: 'vue3',
-      }
-    }],
     '@vite-pwa/nuxt'
   ],
-  "feedback-control.bs.js": {
-    repo: "Feedback_st-jakob-events",
-    owner: "DCC-BS",
-    project: "st-jakob-events_abfragetool"
+
+  vite: {
+    plugins: designSystemPlugins as any,
   },
 
   app: {
@@ -46,7 +44,12 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    githubToken: process.env.GITHUB_TOKEN || '',
+    feedback: {
+      repo: process.env.FEEDBACK_REPO || 'Feedback_st-jakob-events',
+      repoOwner: process.env.FEEDBACK_REPO_OWNER || 'DCC-BS',
+      project: process.env.FEEDBACK_PROJECT || 'st-jakob-events_abfragetool',
+      githubToken: process.env.FEEDBACK_GITHUB_TOKEN || process.env.GITHUB_TOKEN || '',
+    },
   },
 
   pwa: {
@@ -54,7 +57,7 @@ export default defineNuxtConfig({
     strategies: 'injectManifest',
     srcDir: 'public',
     filename: 'sw.js',
-  
+
     manifest: {
       name: 'Veranstaltungen im Raum St. Jakob',
       short_name: 'Veranstaltungen',
@@ -67,12 +70,12 @@ export default defineNuxtConfig({
     },
   },
 
-  tailwindcss: {
-    viewer: false,
+  i18n: {
+    defaultLocale: 'de',
   },
+
   css: [
     'v-calendar/style.css',
     '~/assets/css/tailwind.css'
   ],
-  postcss
 })

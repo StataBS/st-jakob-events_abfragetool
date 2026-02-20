@@ -7,7 +7,7 @@
   }
 
   .page-header {
-    @apply grid items-center container max-w-[2560px];
+    @apply grid items-center mx-auto px-15 md:px-20 xl:px-40 max-w-[2560px];
     @apply flex items-center gap-30 lg:gap-60 py-20;
     height: var(--page-header-height);
 
@@ -16,7 +16,7 @@
       'console console' auto /
       1fr auto;
 
-    @screen md {
+    @media (width >= 768px) {
       grid-template:
         'logo console controls' 1fr /
         1fr 1fr 1fr;

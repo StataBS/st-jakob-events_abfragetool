@@ -1,19 +1,19 @@
 .carousel__container {
-  @apply grid px-[8px] xl:px-50 justify-center gap py-30 w-full;
+  @apply grid px-[8px] xl:px-50 justify-center gap-20 py-30 w-full;
 
   grid-template:
     'aside' auto
     'title' auto
     / minmax(auto, 796px);
 
-  @screen md {
+  @media (width >= 768px) {
     grid-template:
       '. aside .' auto
       '. title .' auto
       / 1fr minmax(auto, 796px) 1fr;
   }
 
-  @screen xl {
+  @media (width >= 1210px) {
     grid-template:
       'aside title title' auto
       / 1fr minmax(auto, 796px) 1fr;
@@ -23,7 +23,7 @@
 .carousel__container__title {
   grid-area: title;
   @apply flex flex-col gap-10 px-[8px] xl:px-0;
-  @screen md {
+  @media (width >= 768px) {
     @apply justify-between flex-row items-center;
   }
 }
