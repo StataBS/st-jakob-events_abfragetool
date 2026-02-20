@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "@nuxt/ui";
 
 @import './brand-colors.css';
 @import './components/page.css';
@@ -174,6 +173,12 @@
   --duration-250: 250ms;
 }
 
+@layer base {
+  :root {
+    --spacing: 1px;
+  }
+}
+
 @utility max-w-reduced {
   max-width: 970px;
 }
@@ -216,6 +221,9 @@
 
 body {
   @apply font-sans;
+  color: var(--color-gray-900);
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
 }
 
 @layer base {

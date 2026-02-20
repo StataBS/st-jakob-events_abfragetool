@@ -11,11 +11,11 @@
     @apply hover:text-white/80;
     @apply active:text-white;
   }
+}
 
-  .inline-link {
-    @apply text-blue-700;
-    @apply hover:text-blue-900 hover:visited:text-blue-900;
-    @apply visited:text-blue-700;
-    @apply active:text-blue-500;
-  }
+@utility inline-link {
+  color: var(--color-blue-700);
+  &:hover, &:hover:visited { color: var(--color-blue-900); }
+  &:visited { color: var(--color-blue-700); }
+  &:active { color: var(--color-blue-500); }
 }

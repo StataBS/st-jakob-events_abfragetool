@@ -1,5 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from 'nuxt/config'
+import designSystemPlugin from '@kanton-basel-stadt/designsystem/vite'
+
+const allPlugins = designSystemPlugin({
+  iconOptions: {
+    compiler: 'vue3',
+  },
+})
+const designSystemPlugins = (Array.isArray(allPlugins) ? allPlugins : [allPlugins])
+  .filter((p: any) => p.name !== '@kanton-basel-stadt/designsystem/postcss-tailwind')
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -11,13 +20,12 @@ export default defineNuxtConfig({
 
   modules: [
     'motion-v/nuxt',
-    ['@kanton-basel-stadt/designsystem/nuxt', {
-      iconOptions: {
-        compiler: 'vue3',
-      }
-    }],
     '@vite-pwa/nuxt'
   ],
+
+  vite: {
+    plugins: designSystemPlugins as any,
+  },
 
   app: {
     baseURL: '/',
