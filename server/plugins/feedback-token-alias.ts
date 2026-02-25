@@ -1,30 +1,26 @@
 export default defineNitroPlugin(() => {
-  const sourceToken = process.env.NUXT_GITHUB_TOKEN
+  const env = (globalThis as any).process?.env ?? {}
+  const sourceToken = env.NUXT_GITHUB_TOKEN
 
   const before = {
     runtimeFeedbackTokenSet: Boolean(useRuntimeConfig().feedback?.githubToken),
-    envGITHUB_TOKENSet: Boolean(process.env.GITHUB_TOKEN),
-    envNUXT_GITHUB_TOKENSet: Boolean(process.env.NUXT_GITHUB_TOKEN),
-    envNUXT_FEEDBACK_GITHUB_TOKENSet: Boolean(process.env.NUXT_FEEDBACK_GITHUB_TOKEN),
+    envGITHUB_TOKENSet: Boolean(env.GITHUB_TOKEN),
+    envNUXT_GITHUB_TOKENSet: Boolean(env.NUXT_GITHUB_TOKEN),
+    envNUXT_FEEDBACK_GITHUB_TOKENSet: Boolean(env.NUXT_FEEDBACK_GITHUB_TOKEN),
   }
 
-  if (sourceToken && !process.env.GITHUB_TOKEN) {
-    process.env.GITHUB_TOKEN = sourceToken
+  if (sourceToken && !env.GITHUB_TOKEN) {
+    env.GITHUB_TOKEN = sourceToken
   }
-  if (sourceToken && !process.env.NUXT_FEEDBACK_GITHUB_TOKEN) {
-    process.env.NUXT_FEEDBACK_GITHUB_TOKEN = sourceToken
-  }
-
-  const runtimeConfig = useRuntimeConfig()
-  if (!runtimeConfig.feedback?.githubToken && sourceToken) {
-    runtimeConfig.feedback.githubToken = sourceToken
+  if (sourceToken && !env.NUXT_FEEDBACK_GITHUB_TOKEN) {
+    env.NUXT_FEEDBACK_GITHUB_TOKEN = sourceToken
   }
 
   const after = {
-    runtimeFeedbackTokenSet: Boolean(runtimeConfig.feedback?.githubToken),
-    envGITHUB_TOKENSet: Boolean(process.env.GITHUB_TOKEN),
-    envNUXT_GITHUB_TOKENSet: Boolean(process.env.NUXT_GITHUB_TOKEN),
-    envNUXT_FEEDBACK_GITHUB_TOKENSet: Boolean(process.env.NUXT_FEEDBACK_GITHUB_TOKEN),
+    runtimeFeedbackTokenSet: Boolean(useRuntimeConfig().feedback?.githubToken),
+    envGITHUB_TOKENSet: Boolean(env.GITHUB_TOKEN),
+    envNUXT_GITHUB_TOKENSet: Boolean(env.NUXT_GITHUB_TOKEN),
+    envNUXT_FEEDBACK_GITHUB_TOKENSet: Boolean(env.NUXT_FEEDBACK_GITHUB_TOKEN),
   }
 
   // #region agent log
