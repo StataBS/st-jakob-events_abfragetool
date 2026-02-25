@@ -9,6 +9,7 @@ const allPlugins = designSystemPlugin({
 })
 const designSystemPlugins = (Array.isArray(allPlugins) ? allPlugins : [allPlugins])
   .filter((p: any) => p.name !== '@kanton-basel-stadt/designsystem/postcss-tailwind')
+const env = (globalThis as any).process?.env ?? {}
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -45,10 +46,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     feedback: {
-      repo: process.env.FEEDBACK_REPO,
-      repoOwner: process.env.FEEDBACK_REPO_OWNER,
-      project: process.env.FEEDBACK_PROJECT,
-      githubToken: process.env.GITHUB_TOKEN,
+      repo: env.FEEDBACK_REPO,
+      repoOwner: env.FEEDBACK_REPO_OWNER,
+      project: env.FEEDBACK_PROJECT,
+      githubToken: env.GITHUB_TOKEN,
     },
   },
 
