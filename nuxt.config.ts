@@ -45,28 +45,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     feedback: {
-      repo: process.env.FEEDBACK_REPO || 'Feedback_st-jakob-events',
-      repoOwner: process.env.FEEDBACK_REPO_OWNER || 'DCC-BS',
-      project: process.env.FEEDBACK_PROJECT || 'st-jakob-events_abfragetool',
-      githubToken: process.env.FEEDBACK_GITHUB_TOKEN || process.env.GITHUB_TOKEN || '',
-    },
-  },
-
-  pwa: {
-    registerType: 'autoUpdate',
-    strategies: 'injectManifest',
-    srcDir: 'public',
-    filename: 'sw.js',
-
-    manifest: {
-      name: 'Veranstaltungen im Raum St. Jakob',
-      short_name: 'Veranstaltungen',
-      lang: 'de',
-      start_url: '/',
-      scope: '/',
-      display: 'standalone',
-      background_color: '#ffffff',
-      theme_color: '#00838f',
+      repo: process.env.FEEDBACK_REPO,
+      repoOwner: process.env.FEEDBACK_REPO_OWNER,
+      project: process.env.FEEDBACK_PROJECT,
+      githubToken: process.env.GITHUB_TOKEN,
     },
   },
 
