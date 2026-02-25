@@ -46,9 +46,9 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     feedback: {
-      repo: env.FEEDBACK_REPO,
-      repoOwner: env.FEEDBACK_REPO_OWNER,
-      project: env.FEEDBACK_PROJECT,
+      repo: "Feedback_st-jakob-events",
+      repoOwner: "DCC-BS",
+      project: "st-jakob-events_abfragetool",
       githubToken: env.GITHUB_TOKEN,
     },
   },
