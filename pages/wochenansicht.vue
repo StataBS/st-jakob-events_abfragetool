@@ -103,9 +103,9 @@ function onSwitch(to: 'tag'|'woche') {
           {{ label(d) }}
         </h2>
 
-        <!-- icon-only Tagesansicht button (mobile only) -->
+        <!-- icon-only Tagesansicht button -->
         <button
-            class="button is-action is-icon-only lg:hidden shrink-0"
+            class="button is-action is-icon-only shrink-0"
             @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
             :aria-label="`Tagesansicht für ${label(d)}`"
         >
