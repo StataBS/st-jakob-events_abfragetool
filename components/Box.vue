@@ -52,8 +52,9 @@ const hasContent = computed(() => {
             loading="lazy"
             decoding="async"
         />
-        <IconSymbolCircleWarning
+        <MaskIcon
             v-else-if="variant === 'warning'"
+            src="/icons/triangle-warning.svg"
             class="w-full h-full"
         />
         <IconSymbolCircleWarning

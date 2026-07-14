@@ -115,7 +115,7 @@ function onSwitch(to: 'tag'|'woche') {
         </button>
       </div>
 
-      <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" />
+      <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" show-sperrung-hover />
       <NoEvents v-else />
     </section>
     <!-- Week paging controls -->

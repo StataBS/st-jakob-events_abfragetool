@@ -3,7 +3,13 @@
 import { computed } from 'vue'
 
 type Item = Record<string, unknown>
-const props = withDefaults(defineProps<{ items?: Item[] }>(), { items: () => [] })
+const props = withDefaults(defineProps<{
+  items?: Item[]
+  showSperrungHover?: boolean
+}>(), {
+  items: () => [],
+  showSperrungHover: false,
+})
 
 type Column = { key: string; label: string; always?: boolean; hidden?: boolean }
 
@@ -14,6 +20,9 @@ const columns: Column[] = [
   { key: 'ort',       label: 'Ort' },
   { key: 'bemerkung', label: 'Bemerkung' },
 ]
+
+const TICKET_BODY = 'Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert.'
+const SPERRUNG_BODY = 'Voraussichtlich wird die Kreuzung im Raum St. Jakob für den motorisierten Individualverkehr zeitweise gesperrt.'
 
 const isBlank = (v: unknown) =>
     v == null || (typeof v === 'string' && v.trim() === '')
@@ -33,30 +42,47 @@ const enhancedColumns = computed(() =>
   <Table :columns="enhancedColumns" :rows="items">
     <!-- Custom render for the Name column -->
     <template #cell-name="{ row, value }">
-      <template v-if="row.link">
+      <span class="inline-flex items-center gap-8">
         <a
+            v-if="row.link"
             :href="row.link as string"
             target="_blank"
             rel="noopener"
         >
           {{ value }}
         </a>
-      </template>
-      <template v-else>
-        {{ value ?? '–' }}
-      </template>
+        <template v-else>
+          {{ value ?? '–' }}
+        </template>
 
-      <!-- Tickets icon if Ticketintegration is truthy -->
-      <img
-          v-if="row.ticketintegration"
-          :src="'icons/tickets.svg'"
-          :alt="'Ticket verfügbar'"
-          class="inline-block ml-10 align-text-bottom"
-          style="width: 20px; height: 20px;"
-          loading="lazy"
-          decoding="async"
-          title="Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert."
-      />
+        <span
+            v-if="row.ticketintegration || (showSperrungHover && row.sperrung === 'ja')"
+            class="inline-flex items-center gap-8"
+        >
+          <!-- Tickets icon if Ticketintegration is truthy -->
+          <IconHoverBox
+              v-if="row.ticketintegration"
+              variant="info"
+              title="Ticket verfügbar"
+              :body="TICKET_BODY"
+              aria-label="Ticket verfügbar"
+          >
+            <MaskIcon
+                src="/icons/tickets.svg"
+                class="w-20 h-20 text-primary-600"
+            />
+          </IconHoverBox>
+
+          <!-- Sperrung warning (Wochenansicht) -->
+          <IconHoverBox
+              v-if="showSperrungHover && row.sperrung === 'ja'"
+              variant="warning"
+              title="Geplante Sperrung"
+              :body="SPERRUNG_BODY"
+              aria-label="Geplante Sperrung"
+          />
+        </span>
+      </span>
     </template>
   </Table>
 </template>
