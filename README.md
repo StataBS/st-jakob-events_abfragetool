@@ -121,11 +121,21 @@ Optional environment variables:
 
 - `GITHUB_TOKEN` - GitHub token for API access (if needed)
 
+## Running with Docker
+
+```bash
+docker build -t st-jakob-events .
+docker run --rm -p 8010:8010 --env-file .env st-jakob-events
+```
+
+On push to `main`, `.github/workflows/docker.yml` builds and pushes the image to GitHub Container Registry (`ghcr.io/StataBS/st-jakob-events_abfragetool`).
+
 ## Deployment
 
 Check out the [Nuxt deployment documentation](https://nuxt.com/docs/getting-started/deployment) for deployment options.
 
 The application can be deployed as:
+- Docker image via GHCR (see above)
 - Static site (using `npm run generate`)
 - Server-rendered application
 - Edge functions
