@@ -3,6 +3,7 @@ import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
 import { normalizeISODateString } from '~/composables/useDateUtils'
 import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
+import IconArrowSouth from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-south'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
 
 // helper to move the selected week by +/- 7 days
@@ -83,15 +84,38 @@ function onSwitch(to: 'tag'|'woche') {
   <AppHeader
       viewMode="woche"
       v-model="selectedDate"
-      :days="days"
-      :countFor="countFor"
       :event-counts="eventCounts"
-      @goDay="onGoDay"
       @switchView="onSwitch"
       @shift="shiftWeek"
   />
 
   <div class="container">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-10 my-20">
+      <a
+          v-for="d in days"
+          :key="d"
+          :href="`#d-${d}`"
+          class="button is-action !no-underline w-full max-w-[250px]"
+          :class="{ 'is-active': d === selectedDate }"
+          @click.prevent="onGoDay(d)"
+      >
+        <div class="flex w-full items-center justify-between md:flex-col md:items-start md:gap-2 md:max-w-[300px]">
+          <div class="flex items-center gap-8">
+            <span class="arrow-icon shrink-0">
+              <component :is="IconArrowSouth" data-symbol="arrow-south" />
+            </span>
+            <span class="font-medium leading-none text-inherit">
+              {{ new Date(d).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit' }) }}
+            </span>
+          </div>
+          <span class="text-sm text-inherit md:mt-2 ml-5 leading-none">
+            {{ countFor(d) }}
+            {{ countFor(d) === 1 ? 'Event&#8199;' : 'Events' }}
+          </span>
+        </div>
+      </a>
+    </div>
+
     <section
         v-for="d in days"
         :key="d"
