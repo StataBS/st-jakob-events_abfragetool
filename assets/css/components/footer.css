@@ -1,4 +1,8 @@
 @layer components {
+  .footer-rule {
+    @apply m-0 h-px border-0 bg-green-600;
+  }
+
   .footer {
     @apply bg-gray-200 py-20 lg:py-40 text-xs;
 

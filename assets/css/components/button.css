@@ -4,31 +4,65 @@
   /* For each button type and each size, there are different states. Each state is implemented with pseudo classes. */
   /* Buttons may have icons on their left, right, be icon only or have no icon at all. These icons are placed both in the DOM via markup and with classes. */
   .button {
-    /* Basics */
-    @apply rounded-[30px] border transition-all ease-in-out duration-250;
-    @apply text-base px-20 py-10;
-
+    @apply border font-medium transition-all ease-in-out duration-250;
     @apply bg-gray-20 border-blue-900 text-blue-900;
 
-    /* State variants */
-    @apply disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-800;
-    @apply hover:bg-blue-700 hover:border-blue-900 hover:text-white;
-    @apply focus:bg-purple-200 focus:border-blue-900 focus:text-blue-900;
-    @apply focus-within:bg-purple-200 focus-within:border-blue-900 focus-within:text-blue-900;
-    @apply active:bg-purple-200 active:border-blue-900 active:text-blue-900;
-    &:not(&.is-action):not(&.is-super).is-feedback {
-      /* Action and super do not have a feedback state */
-      @apply bg-green-100 border-green-700 text-green-700;
-    }
+    /* Weak (default) — aligned with @kanton-basel-stadt/designsystem button base */
+    &:not(&.is-action):not(&.is-super):not(&.is-tab) {
+      @apply rounded-[20px] inline-grid min-h-40 min-w-40 text-left relative overflow-hidden w-auto items-center gap-[7px] justify-start max-w-fit grid-flow-col;
+      @apply text-base px-[0.75em] pt-[0.55em] pb-[0.45em];
 
-    /* Size variant */
-    &:not(&.is-action):not(&.is-super).is-sm {
-      /* No sm version for action and super buttons */
-      @apply text-xs px-15 py-5;
+      @apply disabled:bg-gray-300 disabled:border-gray-300 disabled:text-gray-800;
+      @apply hover:bg-blue-600 hover:border-blue-900 hover:text-white;
+      @apply focus-visible:bg-purple-200 focus-visible:border-purple-900 focus-visible:text-purple-900;
+      @apply active:bg-purple-200 active:border-purple-900 active:text-purple-900;
+
+      &.is-feedback {
+        @apply bg-green-100 border-green-700 text-green-700;
+      }
+
+      &.is-sm {
+        @apply text-sm min-w-30 min-h-30 leading-none px-10 rounded-[15px] gap-5;
+
+        svg,
+        img {
+          @apply w-[16px] h-[16px] -my-5;
+        }
+      }
     }
 
     & svg {
-      @apply shrink-0; /* So any flexbox shenanigans don't resize the icon. */
+      @apply shrink-0;
+    }
+  }
+
+  /**
+   * Designsystem `.is-link`: places a matching icon from the href.
+   * External http(s) links get the north-east arrow with jump-xy on hover.
+   */
+  .button.is-link {
+    &:before,
+    &:after {
+      @apply font-bold;
+    }
+
+    /* Default: east arrow */
+    &:before {
+      content: "→" / "";
+    }
+
+    &:hover:before {
+      animation: jump-x 0.4s ease-in-out;
+    }
+
+    /* External */
+    &[href^='http']:before {
+      content: "↗" / "";
+      @apply order-last;
+    }
+
+    &[href^='http']:hover:before {
+      animation: jump-xy 0.5s ease-in-out;
     }
   }
 
@@ -92,7 +126,7 @@
 
   .button.is-action {
     /* Basics */
-    @apply rounded-[20px] text-sm;
+    @apply rounded-[20px] text-sm px-20 py-10;
     @apply bg-gray-20 border-blue-900 text-blue-900;
 
     /* State variants */
