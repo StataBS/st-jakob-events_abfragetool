@@ -65,4 +65,10 @@
     .box--empfehlung .box__icon {
         @apply text-gray-900;
     }
+
+    .box__image-btn {
+        @apply p-0 m-0 border-0 bg-transparent cursor-zoom-in max-w-full;
+        @apply rounded-large transition-opacity hover:opacity-90;
+        @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600;
+    }
 }

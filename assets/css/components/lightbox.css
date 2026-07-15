@@ -1,0 +1,74 @@
+@layer components {
+  .lightbox {
+    @apply fixed inset-0 z-1000 flex flex-col bg-black/90 text-white;
+  }
+
+  .lightbox__toolbar {
+    @apply relative z-20 flex items-center justify-between gap-10 px-15 py-15 shrink-0;
+  }
+
+  .lightbox__actions {
+    @apply flex items-center gap-10 ml-auto;
+  }
+
+  .lightbox__counter {
+    @apply text-sm text-white/80 m-0;
+  }
+
+  .lightbox__btn,
+  .lightbox__nav {
+    @apply flex items-center justify-center w-40 h-40 rounded-full bg-white/15 text-white text-2xl leading-none;
+    @apply transition-colors hover:bg-white/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white;
+  }
+
+  .lightbox__nav {
+    @apply absolute top-1/2 z-20 -translate-y-1/2;
+  }
+
+  .lightbox__nav--prev {
+    @apply left-15;
+  }
+
+  .lightbox__nav--next {
+    @apply right-15;
+  }
+
+  .lightbox__icon {
+    @apply w-20 h-20;
+  }
+
+  .lightbox__icon--prev {
+    transform: rotate(90deg);
+  }
+
+  .lightbox__icon--next {
+    transform: rotate(-90deg);
+  }
+
+  .lightbox__stage {
+    @apply relative flex-1 flex items-center justify-center overflow-hidden touch-none select-none px-15 pb-40;
+  }
+
+  .lightbox__img {
+    @apply max-w-full max-h-full object-contain origin-center transition-transform duration-75 will-change-transform;
+    touch-action: none;
+  }
+
+  .lightbox__hint {
+    @apply absolute bottom-15 left-0 right-0 text-center text-sm text-white/70 pointer-events-none px-15 m-0;
+  }
+
+  @media (width < 768px) {
+    .lightbox__hint {
+      @apply hidden;
+    }
+
+    .lightbox__nav--prev {
+      @apply left-5;
+    }
+
+    .lightbox__nav--next {
+      @apply right-5;
+    }
+  }
+}

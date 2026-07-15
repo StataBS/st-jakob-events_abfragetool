@@ -30,6 +30,14 @@ const hasContent = computed(() => {
   const hasSlot = !!slots.default
   return hasHtml || hasImgs || hasSlot
 })
+
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
+
+function openLightbox(index: number) {
+  lightboxIndex.value = index
+  lightboxOpen.value = true
+}
 </script>
 
 <template>
@@ -76,17 +84,33 @@ const hasContent = computed(() => {
 
       <!-- Images (moved into Box.vue) -->
       <div v-if="images?.length" class="flex flex-wrap gap-4 my-4">
-        <img
+        <button
             v-for="(src, i) in images"
             :key="`${src}-${i}`"
-            :src="src"
-            :alt="alts?.[i] || ''"
-            class="max-w-full h-auto"
-            loading="lazy"
-            decoding="async"
-        />
+            type="button"
+            class="box__image-btn"
+            :aria-label="alts?.[i] ? `Bild vergrössern: ${alts[i]}` : 'Bild vergrössern'"
+            @click="openLightbox(i)"
+        >
+          <img
+              :src="src"
+              :alt="alts?.[i] || ''"
+              class="max-w-full h-auto"
+              loading="lazy"
+              decoding="async"
+          />
+        </button>
       </div>
     </div>
 
+    <ImageLightbox
+        v-if="images?.length"
+        :images="images"
+        :alts="alts"
+        :index="lightboxIndex"
+        :open="lightboxOpen"
+        @close="lightboxOpen = false"
+        @update:index="lightboxIndex = $event"
+    />
   </div>
 </template>
