@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{
+withDefaults(defineProps<{
   modelValue?: string
   /** map of transport key -> absolute/relative icon URL (already resolved by parent) */
   iconSrcMap?: Record<string, string>
@@ -22,25 +22,31 @@ const tabs = [
 </script>
 
 <template>
-  <div class="tabs-container" role="tablist" aria-label="Anreiseempfehlungen">
-    <button
-        v-for="t in tabs"
-        :key="t.key"
-        class="button is-tab has-icon"
-        :class="{ 'is-active': modelValue === t.key }"
-        @click="onSelect(t.key)"
-        @keydown.enter.prevent="onSelect(t.key)"
-        @keydown.space.prevent="onSelect(t.key)"
+  <div class="tabs my-20">
+    <div
+        class="tabs__list"
+        role="tablist"
+        aria-label="Anreiseempfehlungen"
     >
-      <img
-          :src="iconSrcMap[t.key]"
-          :alt="t.label"
-          class="tab-icon"
-          loading="lazy"
-          decoding="async"
-      />
-      {{ t.label }}
-    </button>
+      <button
+          v-for="t in tabs"
+          :key="t.key"
+          type="button"
+          role="tab"
+          class="tabs__trigger"
+          :class="{ 'tabs__trigger--active': modelValue === t.key }"
+          :aria-selected="modelValue === t.key"
+          @click="onSelect(t.key)"
+          @keydown.enter.prevent="onSelect(t.key)"
+          @keydown.space.prevent="onSelect(t.key)"
+      >
+        <MaskIcon
+            v-if="iconSrcMap[t.key]"
+            :src="iconSrcMap[t.key]"
+            class="tabs__icon"
+        />
+        {{ t.label }}
+      </button>
+    </div>
   </div>
-
 </template>

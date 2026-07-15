@@ -1,0 +1,74 @@
+@layer components {
+  /* Underline tabs — aligned with bs-dashboard-base / klybeck-luft Informationen */
+  .tabs {
+    @apply w-full;
+  }
+
+  .tabs__list {
+    @apply relative flex flex-nowrap items-center gap-5 overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+
+    @screen md {
+      @apply gap-10;
+    }
+  }
+
+  .tabs__trigger {
+    @apply relative inline-flex shrink-0 items-center gap-5 whitespace-nowrap;
+    @apply px-5 py-10 text-base font-medium text-gray-500;
+    @apply border-none bg-transparent cursor-pointer;
+    @apply transition-colors duration-250;
+
+    @screen md {
+      @apply text-lg;
+    }
+  }
+
+  .tabs__trigger::after {
+    content: '';
+    @apply absolute bottom-0 left-0 right-0 rounded-full;
+    @apply bg-transparent transition-all duration-250;
+    height: 0;
+  }
+
+  .tabs__trigger:hover {
+    @apply text-blue-500;
+  }
+
+  .tabs__trigger:hover::after {
+    @apply bg-blue-500;
+    height: 1px;
+  }
+
+  .tabs__trigger:focus-visible {
+    @apply outline-none ring-2 ring-inset ring-blue-900;
+  }
+
+  .tabs__trigger--active {
+    @apply text-blue-800 font-bold;
+  }
+
+  .tabs__trigger--active::after {
+    @apply bg-blue-800;
+    height: 2px;
+  }
+
+  .tabs__trigger--active:hover {
+    @apply text-blue-900;
+  }
+
+  .tabs__trigger--active:hover::after {
+    @apply bg-blue-900;
+    height: 2px;
+  }
+
+  /* Mask icons follow currentColor (same as label) */
+  .tabs__trigger .tabs__icon {
+    @apply w-20 h-20 shrink-0 transition-colors duration-250;
+  }
+
+  .tabs__content {
+    @apply mt-20;
+  }
+}
