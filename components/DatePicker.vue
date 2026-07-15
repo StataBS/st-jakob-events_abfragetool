@@ -189,32 +189,34 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 // ---------------------------
-// 5) DOT ATTRIBUTES & HIGHLIGHT
+// 5) CONTENT ATTRIBUTES & HIGHLIGHT
 // ---------------------------
-const dotAttributes = computed(() => {
+// VCalendar content: named colors apply via vc-* classes and auto-bold the day number.
+// See https://vcalendar.io/calendar/attributes.html#content
+const contentAttributes = computed(() => {
   const counts = props.eventCounts
   if (!counts) return []
 
-  const attrs: any[] = []
+  const datesWithEvents = Object.entries(counts)
+    .filter(([, count]) => count > 0)
+    .map(([iso]) => isoToDate(iso))
 
-  for (const [iso, count] of Object.entries(counts)) {
-    if (!count) continue
-    const date = isoToDate(iso)
-    const dots = Math.min(count, 4)
+  if (!datesWithEvents.length) return []
 
-    for (let i = 0; i < dots; i++) {
-      attrs.push({
-        key: `${iso}-${i}`,
-        dates: date,
-        dot: {
-          style: { backgroundColor: '#2A9749' },
+  return [
+    {
+      key: 'events',
+      dates: datesWithEvents,
+      content: {
+        color: 'green',
+        style: {
+          color: '#2A9749',
+          fontWeight: 700,
         },
-        order: 5,
-      })
-    }
-  }
-
-  return attrs
+      },
+      order: 5,
+    },
+  ]
 })
 
 const selectAttribute = {
@@ -234,7 +236,7 @@ const selectAttribute = {
         mode="date"
         is-required
         :select-attribute="selectAttribute"
-        :attributes="dotAttributes"
+        :attributes="contentAttributes"
         :popover="{ visibility: 'focus', placement: 'bottom-start' }"
     >
       <template #default="{ togglePopover }">

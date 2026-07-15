@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
+import { addDaysISO, parseISO } from '~/composables/useDateUtils'
 
 type ViewMode = 'tag' | 'woche'
 
@@ -25,16 +26,14 @@ const selectedDate = computed({
   set: (v: string) => emit('update:modelValue', v),
 })
 
-const fmtCH = (d: Date, opts: Intl.DateTimeFormatOptions) =>
-    d.toLocaleDateString('de-CH', opts)
+const fmtCH = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+    (parseISO(iso) ?? new Date()).toLocaleDateString('de-CH', opts)
 
 const weekRange = computed(() => {
   if (props.viewMode !== 'woche') return ''
-  const start = new Date(props.modelValue)
-  const end = new Date(start)
-  end.setDate(start.getDate() + 6)
-  const startStr = fmtCH(start, { day: '2-digit' })
-  const endStr = fmtCH(end, {
+  const endIso = addDaysISO(props.modelValue, 6)
+  const startStr = fmtCH(props.modelValue, { day: '2-digit' })
+  const endStr = fmtCH(endIso, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
-import { normalizeISODateString } from '~/composables/useDateUtils'
+import {
+  addDaysISO,
+  normalizeISODateString,
+  parseISO,
+  todayISODateString,
+} from '~/composables/useDateUtils'
 import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconArrowSouth from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-south'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
 
 // helper to move the selected week by +/- 7 days
 function shiftWeek(deltaDays: number) {
-  const base = new Date(selectedDate.value)
-  base.setDate(base.getDate() + deltaDays)
-  const nextIso = iso(base)
-  selectedDate.value = nextIso
+  selectedDate.value = addDaysISO(selectedDate.value, deltaDays)
   // scroll to top so users see the new week header immediately
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -19,7 +21,7 @@ function shiftWeek(deltaDays: number) {
 const route = useRoute()
 const router = useRouter()
 
-const defaultIso = new Date().toISOString().slice(0,10)
+const defaultIso = todayISODateString()
 const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
 
 watch(selectedDate, (d) => {
@@ -28,10 +30,9 @@ watch(selectedDate, (d) => {
   router.replace({ path: '/wochenansicht', query: { ...route.query, datum: n } })
 })
 
-const iso = (d: Date) => d.toISOString().slice(0,10)
-const addDays = (d: Date, n: number) => { const x = new Date(d); x.setDate(x.getDate()+n); return x }
-const start = computed(() => new Date(selectedDate.value))
-const days = computed(() => Array.from({length:7}, (_,i) => iso(addDays(start.value, i))))
+const days = computed(() =>
+  Array.from({ length: 7 }, (_, i) => addDaysISO(selectedDate.value, i)),
+)
 
 const { fetchEvents } = useBsApi()
 const { data: eventsRaw } = await useAsyncData('events', fetchEvents, { server: false })
@@ -63,8 +64,8 @@ const eventCounts = computed<Record<string, number>>(() => {
 
 
 // label like "Montag, 10.11.2025"
-const label = (d:string) =>
-    new Date(d).toLocaleDateString('de-CH', {
+const label = (d: string) =>
+    (parseISO(d) ?? new Date()).toLocaleDateString('de-CH', {
       weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
     })
 
@@ -105,7 +106,7 @@ function onSwitch(to: 'tag'|'woche') {
               <component :is="IconArrowSouth" data-symbol="arrow-south" />
             </span>
             <span class="font-medium leading-none text-inherit">
-              {{ new Date(d).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit' }) }}
+              {{ (parseISO(d) ?? new Date()).toLocaleDateString('de-CH', { day: '2-digit', month: '2-digit' }) }}
             </span>
           </div>
           <span class="text-sm text-inherit md:mt-2 ml-5 leading-none">

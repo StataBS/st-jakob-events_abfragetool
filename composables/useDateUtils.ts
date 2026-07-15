@@ -26,6 +26,20 @@ export const parseISO = (d?: string) => {
     return new Date(y, m - 1, dd);
 };
 
+/** Local calendar date → YYYY-MM-DD (avoids UTC/DST shifts from toISOString). */
+export const toISODateString = (d: Date) =>
+    `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+/** Today's local date as YYYY-MM-DD. */
+export const todayISODateString = () => toISODateString(new Date());
+
+/** Shift an ISO date by N calendar days in local time. */
+export const addDaysISO = (iso: string, deltaDays: number) => {
+    const d = parseISO(iso) ?? new Date();
+    d.setDate(d.getDate() + deltaDays);
+    return toISODateString(d);
+};
+
 export const parseMinutes = (t?: string) => {
     if (!t) return NaN;
     const [h, m] = t.split(':').map(Number);

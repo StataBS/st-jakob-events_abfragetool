@@ -1,29 +1,19 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
-import { normalizeISODateString } from '~/composables/useDateUtils'
+import { addDaysISO, normalizeISODateString, todayISODateString } from '~/composables/useDateUtils'
 
 const route = useRoute()
 const router = useRouter()
 
-// date param (default today, ISO-UTC)
-const defaultIso = new Date().toISOString().slice(0,10)
+// date param (default today, local calendar date)
+const defaultIso = todayISODateString()
 const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
 
 // shift by +/- N days (used by AppHeader arrows)
 function shiftDay(delta: number) {
-  const base = new Date(selectedDate.value)
-  base.setDate(base.getDate() + delta)
-  const nextIso = base.toISOString().slice(0, 10)
-  selectedDate.value = nextIso
+  selectedDate.value = addDaysISO(selectedDate.value, delta)
 }
-
-// normalize + reflect in query
-watch(selectedDate, (d) => {
-  const n = normalizeISODateString(d) || defaultIso
-  if (n !== d) selectedDate.value = n
-  router.replace({ path: '/tagesansicht', query: { ...route.query, datum: n } })
-})
 
 // normalize + reflect in query
 watch(selectedDate, (d) => {
