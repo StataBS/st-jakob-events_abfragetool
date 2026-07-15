@@ -136,7 +136,8 @@ function onSwitch(to: 'tag'|'woche') {
     />
 
     <div class="my-30 text-gray-700">
-      Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen. Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
+      Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen.<br />
+      Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
     </div>
   </div>
 

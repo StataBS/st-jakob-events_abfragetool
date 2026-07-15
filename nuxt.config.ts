@@ -36,6 +36,10 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
         { name: 'theme-color', content: '#00838f' },
+        {
+          name: 'description',
+          content: 'Überblick über aktuelle Veranstaltungen im Raum St. Jakob in Basel sowie Informationen zur Anreise und zur Verkehrssituation vor Ort.',
+        },
       ],
       title: 'Veranstaltungen im Raum St. Jakob',
       link: [
