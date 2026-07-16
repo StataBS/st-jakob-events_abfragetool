@@ -17,6 +17,8 @@
 @import './components/ck-content.css';
 @import './components/link.css';
 @import './components/table.css';
+@import './components/kpi-card.css';
+@import './components/year-calendar.css';
 @import './components/sprite-symbol.css';
 @import './components/toggle-switch.css';
 @import './components/hero-image.css';

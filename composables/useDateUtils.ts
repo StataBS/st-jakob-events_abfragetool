@@ -40,6 +40,17 @@ export const addDaysISO = (iso: string, deltaDays: number) => {
     return toISODateString(d);
 };
 
+/** Shift an ISO date by N years, clamping day to the target month (e.g. Feb 29 → 28). */
+export const addYearsISO = (iso: string, deltaYears: number) => {
+    const n = normalizeISODateString(iso);
+    const d = parseISO(n || undefined) ?? new Date();
+    const y = d.getFullYear() + deltaYears;
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const daysInMonth = new Date(y, m, 0).getDate();
+    return `${y}-${pad2(m)}-${pad2(clamp(day, 1, daysInMonth))}`;
+};
+
 export const parseMinutes = (t?: string) => {
     if (!t) return NaN;
     const [h, m] = t.split(':').map(Number);

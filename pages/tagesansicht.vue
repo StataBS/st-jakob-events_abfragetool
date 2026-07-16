@@ -87,10 +87,12 @@ const iconSrcMap = computed<Record<string, string>>(
     () => Object.fromEntries(Object.entries(iconFileByTransport).map(([k,f]) => [k, iconUrl(f)]))
 )
 
-// switch handler (go to Wochenansicht)
-function onSwitch(to: 'tag'|'woche') {
+// switch handler (go to Wochenansicht / Jahresansicht)
+function onSwitch(to: 'tag'|'woche'|'jahr') {
   if (to === 'woche') {
     router.push({ path: '/wochenansicht', query: { datum: selectedDate.value } })
+  } else if (to === 'jahr') {
+    router.push({ path: '/jahresansicht', query: { datum: selectedDate.value } })
   }
 }
 </script>

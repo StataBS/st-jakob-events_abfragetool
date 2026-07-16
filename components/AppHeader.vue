@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
-import { addDaysISO, parseISO } from '~/composables/useDateUtils'
+import { parseISO } from '~/composables/useDateUtils'
 
-type ViewMode = 'tag' | 'woche'
+export type ViewMode = 'tag' | 'woche' | 'jahr'
 
 const props = defineProps<{
   viewMode: ViewMode
@@ -14,49 +14,48 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:modelValue', v: string): void
   (e: 'switchView', to: ViewMode): void
-  (e: 'shift', deltaDays: number): void
+  (e: 'shift', delta: number): void
 }>()
 
 const link =
     'https://www.bs.ch/jsd/polizei/unsere-hauptabteilungen/verkehr/bikantonale-geschaeftsstelle-eventverkehr-st-jakob'
 
-// date proxy
 const selectedDate = computed({
   get: () => props.modelValue,
   set: (v: string) => emit('update:modelValue', v),
 })
 
-const fmtCH = (iso: string, opts: Intl.DateTimeFormatOptions) =>
-    (parseISO(iso) ?? new Date()).toLocaleDateString('de-CH', opts)
-
-const weekRange = computed(() => {
-  if (props.viewMode !== 'woche') return ''
-  const endIso = addDaysISO(props.modelValue, 6)
-  const startStr = fmtCH(props.modelValue, { day: '2-digit' })
-  const endStr = fmtCH(endIso, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  })
-  return `${startStr}.–${endStr}`
+const selectedYear = computed(() => {
+  const d = parseISO(props.modelValue)
+  return d ? d.getFullYear() : new Date().getFullYear()
 })
 
-const targetMode = computed<ViewMode>(() =>
-    props.viewMode === 'woche' ? 'tag' : 'woche',
-)
-const switchLabel = computed(() =>
-    props.viewMode === 'woche' ? 'Tagesansicht' : 'Wochenansicht',
-)
-const onSwitch = () => emit('switchView', targetMode.value)
+const switchTargets = computed<{ to: ViewMode; label: string }[]>(() => {
+  const all: { to: ViewMode; label: string }[] = [
+    { to: 'tag', label: 'Tagesansicht' },
+    { to: 'woche', label: 'Wochenansicht' },
+    { to: 'jahr', label: 'Jahresansicht' },
+  ]
+  return all.filter(t => t.to !== props.viewMode)
+})
 
-// prev/next logic for header buttons
-const prevAria = computed(() =>
-    props.viewMode === 'woche' ? 'Vorherige Woche' : 'Vorheriger Tag',
-)
-const nextAria = computed(() =>
-    props.viewMode === 'woche' ? 'Nächste Woche' : 'Nächster Tag',
-)
-const shiftBy = (delta: number) => emit('shift', delta)
+const prevAria = computed(() => {
+  if (props.viewMode === 'jahr') return 'Vorheriges Jahr'
+  if (props.viewMode === 'woche') return 'Vorherige Woche'
+  return 'Vorheriger Tag'
+})
+
+const nextAria = computed(() => {
+  if (props.viewMode === 'jahr') return 'Nächstes Jahr'
+  if (props.viewMode === 'woche') return 'Nächste Woche'
+  return 'Nächster Tag'
+})
+
+const shiftBy = (direction: -1 | 1) => {
+  if (props.viewMode === 'jahr') emit('shift', direction)
+  else if (props.viewMode === 'woche') emit('shift', direction * 7)
+  else emit('shift', direction)
+}
 </script>
 
 <template>
@@ -80,16 +79,13 @@ const shiftBy = (delta: number) => emit('shift', delta)
           Veranstaltungen im Raum St. Jakob
         </h1>
 
-        <!-- Date input + arrows + switch -->
         <div class="mt-15">
           <div class="flex flex-wrap items-center gap-20">
-            <!-- group: prev | DatePicker | next (never splits) -->
             <div class="flex items-center gap-5 shrink-0">
-              <!-- previous day/week -->
               <button
                   type="button"
                   class="button is-action is-icon-only shrink-0"
-                  @click="shiftBy(viewMode === 'woche' ? -7 : -1)"
+                  @click="shiftBy(-1)"
                   :aria-label="prevAria"
                   :title="prevAria"
               >
@@ -98,7 +94,15 @@ const shiftBy = (delta: number) => emit('shift', delta)
                 </span>
               </button>
 
-              <div class="w-[260px] max-w-full">
+              <div v-if="viewMode === 'jahr'" class="w-[260px] max-w-full">
+                <div
+                    class="flex items-center justify-center h-[44px] px-15 bg-white border border-gray-300 rounded text-base font-bold text-gray-900"
+                    aria-live="polite"
+                >
+                  {{ selectedYear }}
+                </div>
+              </div>
+              <div v-else class="w-[260px] max-w-full">
                 <DatePicker
                     v-model="selectedDate"
                     :event-counts="props.eventCounts"
@@ -106,11 +110,10 @@ const shiftBy = (delta: number) => emit('shift', delta)
                 />
               </div>
 
-              <!-- next day/week -->
               <button
                   type="button"
                   class="button is-action is-icon-only shrink-0"
-                  @click="shiftBy(viewMode === 'woche' ? 7 : 1)"
+                  @click="shiftBy(1)"
                   :aria-label="nextAria"
                   :title="nextAria"
               >
@@ -120,16 +123,20 @@ const shiftBy = (delta: number) => emit('shift', delta)
               </button>
             </div>
 
-            <!-- single switch button: same line if space, else wraps below -->
-            <button
-                class="button is-action has-icon shrink-0 !px-10"
-                @click="onSwitch"
-            >
-              <span class="arrow-icon">
-                <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
-              </span>
-              {{ switchLabel }}
-            </button>
+            <div class="flex flex-wrap items-center gap-10">
+              <button
+                  v-for="t in switchTargets"
+                  :key="t.to"
+                  type="button"
+                  class="button is-action has-icon shrink-0 !px-10"
+                  @click="emit('switchView', t.to)"
+              >
+                <span class="arrow-icon">
+                  <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
+                </span>
+                {{ t.label }}
+              </button>
+            </div>
           </div>
         </div>
       </div>

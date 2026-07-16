@@ -75,9 +75,10 @@ function onGoDay(d:string) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-// switch to Tagesansicht with same date
-function onSwitch(to: 'tag'|'woche') {
+// switch to Tagesansicht / Jahresansicht with same date
+function onSwitch(to: 'tag'|'woche'|'jahr') {
   if (to === 'tag') router.push({ path: '/tagesansicht', query: { datum: selectedDate.value } })
+  else if (to === 'jahr') router.push({ path: '/jahresansicht', query: { datum: selectedDate.value } })
 }
 </script>
 
