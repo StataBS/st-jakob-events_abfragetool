@@ -78,6 +78,10 @@ const anreiseItem = computed(() => {
   )
 })
 
+const anreiseHtml = computed(() =>
+    injectSbbDayParam(anreiseItem.value?.text_html, selectedDate.value),
+)
+
 const iconUrl = (file: string) => `icons/${file}`
 const iconFileByTransport = {
   Velo: 'bicycle.svg', Bus: 'bus.svg', Tram: 'tram.svg',
@@ -121,7 +125,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
 
     <RecommendationBox
         :title="`${activeTransport}`"
-        :html="anreiseItem?.text_html"
+        :html="anreiseHtml"
         :images="anreiseItem?.bildquellen"
         :alts="anreiseItem?.alt_texte"
         :icon-src="iconSrcMap[activeTransport]"
