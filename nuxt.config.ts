@@ -21,7 +21,8 @@ export default defineNuxtConfig({
 
   modules: [
     'motion-v/nuxt',
-    '@vite-pwa/nuxt'
+    '@vite-pwa/nuxt',
+    '@nuxt/scripts',
   ],
 
   vite: {
@@ -54,6 +55,12 @@ export default defineNuxtConfig({
       repoOwner: "DCC-BS",
       project: "st-jakob-events_abfragetool",
       githubToken: env.GITHUB_TOKEN,
+    },
+    public: {
+      // Override when Matomo moves: NUXT_PUBLIC_MATOMO_URL=https://matomo.pvpdstata02.bs.ch
+      matomoUrl: 'https://klybeck-dashboard.pvpdstata02.bs.ch',
+      // Set via NUXT_PUBLIC_MATOMO_SITE_ID (create site for st-jakob-events.bs.ch in Matomo)
+      matomoSiteId: '',
     },
   },
 
