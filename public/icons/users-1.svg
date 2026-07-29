@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="24" viewBox="0 0 34 24" fill="none">
+  <g fill="#146C8B">
+    <circle cx="6" cy="5.5" r="3.25"/>
+    <rect x="1.25" y="9.75" width="9.5" height="12.25" rx="2"/>
+  </g>
+  <g fill="#BABABA">
+    <circle cx="17" cy="5.5" r="3.25"/>
+    <rect x="12.25" y="9.75" width="9.5" height="12.25" rx="2"/>
+  </g>
+  <g fill="#BABABA">
+    <circle cx="28" cy="5.5" r="3.25"/>
+    <rect x="23.25" y="9.75" width="9.5" height="12.25" rx="2"/>
+  </g>
+</svg>
