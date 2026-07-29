@@ -221,10 +221,8 @@ const contentAttributes = computed(() => {
 
 const selectAttribute = {
   highlight: {
-    style: {
-      backgroundColor: '#C196DC',
-      color: 'white',
-    },
+    color: 'purple',
+    fillMode: 'outline',
   },
 }
 </script>
