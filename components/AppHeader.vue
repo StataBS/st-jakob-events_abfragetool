@@ -141,10 +141,10 @@ const shiftBy = (direction: -1 | 1) => {
                   class="button is-action has-icon shrink-0 !px-10"
                   @click="emit('switchView', t.to)"
               >
+                {{ t.label }}
                 <span class="arrow-icon">
                   <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
                 </span>
-                {{ t.label }}
               </button>
             </div>
           </div>
