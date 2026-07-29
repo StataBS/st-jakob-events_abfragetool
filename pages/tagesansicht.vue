@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
+import {
+  besucherTierForDay,
+  buildVisitorTiersByDay,
+} from '~/composables/useBesucher'
 import { useFilters } from '~/composables/useFilters'
 import {
   addDaysISO,
@@ -28,8 +32,9 @@ watch(selectedDate, (d) => {
 })
 
 // fetch
-const { fetchEvents, fetchAnreise, fetchTimedInfo } = useBsApi()
+const { fetchEvents, fetchBesucher, fetchAnreise, fetchTimedInfo } = useBsApi()
 const { data: eventsRaw }  = await useAsyncData('events', fetchEvents,  { server: false })
+const { data: besucherRaw } = await useAsyncData('besucher', fetchBesucher, { server: false })
 const { data: anreiseRaw } = await useAsyncData('anreise', fetchAnreise,  { server: false })
 const { data: infoTRaw }   = await useAsyncData('infoT',  fetchTimedInfo,  { server: false })
 
@@ -57,6 +62,14 @@ const eventCounts = computed<Record<string, number>>(() => {
 const { filterEventsByDate, filterTimedInfoCoveringDate } = useFilters()
 const events = computed(() => filterEventsByDate(eventsRaw.value || [], selectedDate.value))
 const timedInfosForDay = computed(() => filterTimedInfoCoveringDate(infoTRaw.value || [], selectedDate.value))
+
+const visitorsByDay = computed(() => buildVisitorTiersByDay(besucherRaw.value))
+const besucherTier = computed(() =>
+  besucherTierForDay(
+    events.value.length > 0,
+    visitorsByDay.value[selectedDate.value],
+  ),
+)
 
 // warning names
 const warningNames = computed<string[]>(() => {
@@ -124,9 +137,12 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
 
   <div class="container">
     <div class="my-60">
-      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-10">
-        {{ dayLabel }}
-      </h2>
+      <div class="flex items-center gap-10 min-w-0 mb-10">
+        <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
+          {{ dayLabel }}
+        </h2>
+        <BesucherIcon :tier="besucherTier" />
+      </div>
       <EventsTable v-if="events.length" :items="events" />
       <NoEvents v-else />
     </div>

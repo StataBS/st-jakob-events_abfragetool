@@ -20,47 +20,49 @@
   }
 
   .year-calendar__cell {
-    @apply aspect-square rounded border border-transparent bg-gray-50;
+    @apply relative overflow-hidden aspect-square rounded border border-transparent bg-gray-50;
     @apply p-0 min-w-0 cursor-pointer transition-[box-shadow] duration-150;
   }
 
   .year-calendar__cell--empty {
-    @apply bg-transparent cursor-default pointer-events-none;
+    @apply bg-transparent cursor-default pointer-events-none overflow-visible;
   }
 
-  /* Softer greens by event density */
-  .year-calendar__cell--events-1 {
-    @apply bg-green-200;
+  /* Visitor tiers (dataset 100418) */
+  .year-calendar__cell--unknown {
+    @apply bg-gray-300;
   }
 
-  .year-calendar__cell--events-2 {
-    @apply bg-green-300;
+  .year-calendar__cell--low {
+    @apply bg-blue-300;
   }
 
-  .year-calendar__cell--events-3 {
-    @apply bg-green-400;
+  .year-calendar__cell--mid {
+    @apply bg-blue-500;
   }
 
-  .year-calendar__cell--sperrungen {
-    @apply bg-red-200;
+  .year-calendar__cell--high {
+    @apply bg-blue-700;
   }
 
-  .year-calendar__cell--selected {
-    box-shadow: inset 0 0 0 3px #9156B4; /* purple-600 */
+  /* Bottom-right eighth triangle for Sperrung */
+  .year-calendar__cell--has-sperrung::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #B81600; /* red-800 */
+    clip-path: polygon(50% 100%, 100% 100%, 100% 50%);
+    pointer-events: none;
   }
 
   .year-calendar__cell--open {
     box-shadow: inset 0 0 0 3px #723D8E; /* purple-700 — active popover */
   }
 
-  /* Desktop only: soft border play on hover (no popover) */
+  /* Desktop only: soft border on hover (no persistent URL-selected ring) */
   @media (hover: hover) and (pointer: fine) {
-    .year-calendar__cell:hover:not(.year-calendar__cell--selected):not(.year-calendar__cell--open) {
+    .year-calendar__cell:hover:not(.year-calendar__cell--open) {
       box-shadow: inset 0 0 0 2px #C196DC; /* purple-400 */
-    }
-
-    .year-calendar__cell--selected:hover:not(.year-calendar__cell--open) {
-      box-shadow: inset 0 0 0 3px #723D8E; /* purple-700 */
     }
   }
 
@@ -86,5 +88,31 @@
 
   .year-calendar-hover__pager .button:disabled {
     @apply opacity-40 cursor-not-allowed;
+  }
+
+  .year-calendar-legend {
+    @apply flex flex-wrap gap-x-30 gap-y-15 mb-30 text-base text-gray-900;
+  }
+
+  .year-calendar-legend__item {
+    @apply inline-flex items-center gap-10;
+  }
+
+  .year-calendar-legend__swatch {
+    @apply inline-block w-30 h-30 rounded border border-gray-200 shrink-0;
+  }
+
+  .year-calendar-legend__swatch--sperrung {
+    position: relative;
+    background-color: #F2F2F2;
+    overflow: hidden;
+  }
+
+  .year-calendar-legend__swatch--sperrung::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #B81600;
+    clip-path: polygon(50% 100%, 100% 100%, 100% 50%);
   }
 }

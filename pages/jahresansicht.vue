@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
+import { buildVisitorTiersByDay } from '~/composables/useBesucher'
 import { sortEventsByStart } from '~/composables/useFilters'
 import {
   addYearsISO,
@@ -42,8 +43,9 @@ watch(selectedDate, (d) => {
 
 const selectedYear = computed(() => Number(selectedDate.value.slice(0, 4)))
 
-const { fetchEvents } = useBsApi()
+const { fetchEvents, fetchBesucher } = useBsApi()
 const { data: eventsRaw } = await useAsyncData('events', fetchEvents, { server: false })
+const { data: besucherRaw } = await useAsyncData('besucher', fetchBesucher, { server: false })
 
 function eventIso(e: EventItem): string | null {
   const raw = e.datum_iso || e.datum || e.date
@@ -69,25 +71,12 @@ const eventsByDay = computed<Record<string, EventItem[]>>(() => {
     result[iso].push(e)
   }
   for (const iso of Object.keys(result)) {
-    result[iso] = sortEventsByStart(result[iso])
+    result[iso] = sortEventsByStart(result[iso] ?? [])
   }
   return result
 })
 
-const sperrungByDay = computed<Record<string, EventItem[]>>(() => {
-  const result: Record<string, EventItem[]> = {}
-  for (const e of yearEvents.value) {
-    if (e.sperrung !== 'ja') continue
-    const iso = eventIso(e)
-    if (!iso) continue
-    if (!result[iso]) result[iso] = []
-    result[iso].push(e)
-  }
-  for (const iso of Object.keys(result)) {
-    result[iso] = sortEventsByStart(result[iso])
-  }
-  return result
-})
+const visitorsByDay = computed(() => buildVisitorTiersByDay(besucherRaw.value))
 
 const eventCounts = computed<Record<string, number>>(() => {
   const result: Record<string, number> = {}
@@ -98,10 +87,26 @@ const eventCounts = computed<Record<string, number>>(() => {
 })
 
 const kpiEventCount = computed(() => yearEvents.value.length)
-const kpiSperrungDays = computed(() => Object.keys(sperrungByDay.value).length)
+const kpiSperrungDays = computed(() => {
+  const days = new Set<string>()
+  for (const e of yearEvents.value) {
+    if (e.sperrung !== 'ja') continue
+    const iso = eventIso(e)
+    if (iso) days.add(iso)
+  }
+  return days.size
+})
 const kpiMultiEventDays = computed(
   () => Object.values(eventsByDay.value).filter(list => list.length > 1).length,
 )
+
+const LEGEND = [
+  { class: 'bg-gray-50', label: 'keine Veranstaltung' },
+  { class: 'bg-gray-300', label: 'Besucherzahl unbekannt' },
+  { class: 'bg-blue-300', label: 'unter 5’000' },
+  { class: 'bg-blue-500', label: '5’000 bis 14’999' },
+  { class: 'bg-blue-700', label: '15’000 und mehr' },
+] as const
 
 function onSwitch(to: ViewMode) {
   if (to === 'tag') {
@@ -128,23 +133,34 @@ function onSwitch(to: ViewMode) {
       <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
     </div>
 
-    <section class="mb-60">
-      <h2 class="text-2xl font-bold my-20 text-gray-900">Events</h2>
-      <YearCalendar
-          :year="selectedYear"
-          :selected-date="selectedDate"
-          variant="events"
-          :events-by-day="eventsByDay"
-      />
-    </section>
-
     <section class="mb-40">
-      <h2 class="text-2xl font-bold my-20 text-gray-900">Sperrungen</h2>
+      <h2 class="text-2xl font-bold my-20 text-gray-900">
+        Erwartete Besucherzahl und Sperrungen
+      </h2>
+
+      <div class="year-calendar-legend" role="list">
+        <span
+            v-for="item in LEGEND"
+            :key="item.label"
+            class="year-calendar-legend__item"
+            role="listitem"
+        >
+          <span class="year-calendar-legend__swatch" :class="item.class" aria-hidden="true" />
+          {{ item.label }}
+        </span>
+        <span class="year-calendar-legend__item" role="listitem">
+          <span
+              class="year-calendar-legend__swatch year-calendar-legend__swatch--sperrung"
+              aria-hidden="true"
+          />
+          Sperrung
+        </span>
+      </div>
+
       <YearCalendar
           :year="selectedYear"
-          :selected-date="selectedDate"
-          variant="sperrungen"
-          :events-by-day="sperrungByDay"
+          :events-by-day="eventsByDay"
+          :visitor-tiers-by-day="visitorsByDay"
       />
     </section>
 

@@ -9,7 +9,7 @@ import {
 import IconSymbolCircleWarning from '@kanton-basel-stadt/designsystem/icons/symbol/circle-warning'
 
 const props = withDefaults(defineProps<{
-  variant?: 'info' | 'warning'
+  variant?: 'info' | 'warning' | 'besucher'
   title: string
   titleAddon?: string | null
   body: string
@@ -25,6 +25,33 @@ const open = ref(false)
 const triggerLabel = computed(() => {
   const base = props.ariaLabel || props.title
   return `${base} – Infos anzeigen`
+})
+
+/** Accent classes analogous to info (green) / warning (red). */
+const accent = computed(() => {
+  switch (props.variant) {
+    case 'warning':
+      return {
+        triggerHover: 'hover:border-red-800 focus-visible:outline-red-800',
+        triggerOpen: 'bg-black/5 border-red-800',
+        panel: 'bg-red-50 border-red-800',
+        text: 'text-red-800',
+      }
+    case 'besucher':
+      return {
+        triggerHover: 'hover:border-blue-700 focus-visible:outline-blue-700',
+        triggerOpen: 'bg-black/5 border-blue-700',
+        panel: 'bg-blue-50 border-blue-700',
+        text: 'text-blue-700',
+      }
+    default:
+      return {
+        triggerHover: 'hover:border-primary-600 focus-visible:outline-primary-600',
+        triggerOpen: 'bg-black/5 border-primary-600',
+        panel: 'bg-green-50 border-primary-600',
+        text: 'text-primary-600',
+      }
+  }
 })
 
 function isTouchLike() {
@@ -47,14 +74,8 @@ function onTriggerClick(event: MouseEvent) {
         type="button"
         class="inline-flex items-center justify-center p-4 rounded-full border border-transparent bg-transparent cursor-pointer transition-colors duration-150 hover:bg-black/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         :class="[
-          variant === 'warning'
-            ? 'hover:border-red-800 focus-visible:outline-red-800'
-            : 'hover:border-primary-600 focus-visible:outline-primary-600',
-          open
-            ? (variant === 'warning'
-                ? 'bg-black/5 border-red-800'
-                : 'bg-black/5 border-primary-600')
-            : '',
+          accent.triggerHover,
+          open ? accent.triggerOpen : '',
         ]"
         :aria-label="triggerLabel"
         :aria-expanded="open"
@@ -66,6 +87,15 @@ function onTriggerClick(event: MouseEvent) {
             src="/icons/triangle-warning.svg"
             class="w-20 h-20 text-red-800"
         />
+        <img
+            v-else-if="variant === 'besucher'"
+            src="/icons/users-3.svg"
+            alt=""
+            class="h-20 w-auto"
+            width="34"
+            height="24"
+            aria-hidden="true"
+        >
         <IconSymbolCircleWarning
             v-else
             class="w-20 h-20 text-primary-600 transform rotate-180"
@@ -81,13 +111,11 @@ function onTriggerClick(event: MouseEvent) {
           :avoid-collisions="true"
           :collision-padding="8"
           class="z-50 w-[min(360px,calc(100vw-16px))] rounded-large border p-15 pr-50 shadow-[0_10px_25px_#BABABA] outline-none"
-          :class="variant === 'warning'
-            ? 'bg-red-50 border-red-800'
-            : 'bg-green-50 border-primary-600'"
+          :class="accent.panel"
       >
         <div
             class="absolute right-10 top-10 flex items-center justify-center w-28 h-28"
-            :class="variant === 'warning' ? 'text-red-800' : 'text-primary-600'"
+            :class="accent.text"
             aria-hidden="true"
         >
           <MaskIcon
@@ -95,6 +123,13 @@ function onTriggerClick(event: MouseEvent) {
               src="/icons/triangle-warning.svg"
               class="w-full h-full"
           />
+          <img
+              v-else-if="variant === 'besucher'"
+              src="/icons/users-3.svg"
+              alt=""
+              class="h-full w-auto"
+              aria-hidden="true"
+          >
           <IconSymbolCircleWarning
               v-else
               class="w-full h-full transform rotate-180"
@@ -104,7 +139,7 @@ function onTriggerClick(event: MouseEvent) {
         <div class="flex flex-wrap items-baseline mr-20">
           <strong
               class="text-base mr-[6px]"
-              :class="variant === 'warning' ? 'text-red-800' : 'text-primary-600'"
+              :class="accent.text"
           >
             {{ title }}
           </strong>

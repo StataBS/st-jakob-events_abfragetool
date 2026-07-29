@@ -9,16 +9,24 @@ import {
 import IconArrowNorthEast from '@kanton-basel-stadt/designsystem/icons/symbol/arrow-north-east'
 import IconCaret from '@kanton-basel-stadt/designsystem/icons/symbol/caret'
 import { parseISO } from '~/composables/useDateUtils'
+import {
+  besucherTierForDay,
+  type BesucherTier,
+  type KnownBesucherTier,
+} from '~/composables/useBesucher'
 
 type EventItem = Record<string, unknown>
+
+const TICKET_BODY = 'Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert.'
+const SPERRUNG_BODY = 'Voraussichtlich wird die Kreuzung im Raum St. Jakob für den motorisierten Individualverkehr zeitweise gesperrt.'
 
 const props = defineProps<{
   iso: string
   day: number
   monthLabel: string
-  selectedDate: string
-  variant: 'events' | 'sperrungen'
   events: EventItem[]
+  /** Known visitor tier for this day from dataset 100418 */
+  knownVisitorTier?: KnownBesucherTier | null
 }>()
 
 const router = useRouter()
@@ -37,6 +45,14 @@ const count = computed(() => props.events.length)
 const pageCount = computed(() => Math.max(count.value, 1))
 const currentEvent = computed(() => props.events[page.value] ?? null)
 
+const tier = computed<BesucherTier>(() =>
+  besucherTierForDay(count.value > 0, props.knownVisitorTier),
+)
+
+const hasSperrung = computed(() =>
+  props.events.some(e => e.sperrung === 'ja'),
+)
+
 const dayLabel = computed(() =>
   (parseISO(props.iso) ?? new Date()).toLocaleDateString('de-CH', {
     weekday: 'long',
@@ -47,20 +63,14 @@ const dayLabel = computed(() =>
 )
 
 const fillClass = computed(() => {
-  if (props.variant === 'sperrungen') {
-    return count.value > 0 ? 'year-calendar__cell--sperrungen' : ''
+  switch (tier.value) {
+    case 'unknown': return 'year-calendar__cell--unknown'
+    case 'low': return 'year-calendar__cell--low'
+    case 'mid': return 'year-calendar__cell--mid'
+    case 'high': return 'year-calendar__cell--high'
+    default: return ''
   }
-  if (count.value >= 3) return 'year-calendar__cell--events-3'
-  if (count.value === 2) return 'year-calendar__cell--events-2'
-  if (count.value === 1) return 'year-calendar__cell--events-1'
-  return ''
 })
-
-const emptyMessage = computed(() =>
-  props.variant === 'sperrungen'
-    ? 'Keine Sperrungen an diesem Tag'
-    : 'Keine Veranstaltungen an diesem Tag',
-)
 
 watch(open, (isOpen) => {
   if (isOpen) page.value = 0
@@ -97,10 +107,10 @@ function nextPage() {
         class="year-calendar__cell"
         :class="[
           fillClass,
-          iso === selectedDate ? 'year-calendar__cell--selected' : '',
+          hasSperrung ? 'year-calendar__cell--has-sperrung' : '',
           open ? 'year-calendar__cell--open' : '',
         ]"
-        :aria-label="`${day}. ${monthLabel}${count ? `: ${count} Einträge` : ''}`"
+        :aria-label="`${day}. ${monthLabel}${count ? `: ${count} Einträge` : ''}${hasSperrung ? ', mit Sperrung' : ''}`"
         :aria-expanded="open"
     >
       <span class="sr-only">{{ day }}</span>
@@ -119,6 +129,7 @@ function nextPage() {
           <strong class="text-base text-gray-900 capitalize truncate">
             {{ dayLabel }}
           </strong>
+          <BesucherIcon :tier="tier" :with-hover="false" />
           <button
               type="button"
               class="button is-action is-icon-only shrink-0"
@@ -139,16 +150,49 @@ function nextPage() {
           >
             <span class="year-calendar-hover__label">{{ field.label }}</span>
             <span class="year-calendar-hover__value">
-              <a
-                  v-if="field.key === 'name' && currentEvent.link"
-                  :href="currentEvent.link as string"
-                  target="_blank"
-                  rel="noopener"
-                  class="inline-link"
-                  @click.stop
-              >
-                {{ displayValue(currentEvent[field.key]) }}
-              </a>
+              <template v-if="field.key === 'name'">
+                <span class="inline-flex items-center gap-8 flex-wrap">
+                  <a
+                      v-if="currentEvent.link"
+                      :href="currentEvent.link as string"
+                      target="_blank"
+                      rel="noopener"
+                      class="inline-link"
+                      @click.stop
+                  >
+                    {{ displayValue(currentEvent[field.key]) }}
+                  </a>
+                  <template v-else>
+                    {{ displayValue(currentEvent[field.key]) }}
+                  </template>
+
+                  <span
+                      v-if="currentEvent.ticketintegration || currentEvent.sperrung === 'ja'"
+                      class="inline-flex items-center gap-8"
+                  >
+                    <IconHoverBox
+                        v-if="currentEvent.ticketintegration"
+                        variant="info"
+                        title="Ticketintegration"
+                        :body="TICKET_BODY"
+                        aria-label="Ticketintegration"
+                    >
+                      <MaskIcon
+                          src="/icons/tickets.svg"
+                          class="w-20 h-20 text-primary-600"
+                      />
+                    </IconHoverBox>
+
+                    <IconHoverBox
+                        v-if="currentEvent.sperrung === 'ja'"
+                        variant="warning"
+                        title="Geplante Sperrung"
+                        :body="SPERRUNG_BODY"
+                        aria-label="Geplante Sperrung"
+                    />
+                  </span>
+                </span>
+              </template>
               <template v-else>
                 {{ displayValue(currentEvent[field.key]) }}
               </template>
@@ -156,7 +200,7 @@ function nextPage() {
           </div>
         </div>
         <p v-else class="year-calendar-hover__empty mb-0">
-          {{ emptyMessage }}
+          Keine Veranstaltungen an diesem Tag
         </p>
 
         <div

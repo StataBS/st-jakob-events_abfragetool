@@ -61,6 +61,8 @@ export default defineNuxtConfig({
       matomoUrl: 'https://klybeck-dashboard.pvpdstata02.bs.ch',
       // Set via NUXT_PUBLIC_MATOMO_SITE_ID (create site for st-jakob-events.bs.ch in Matomo)
       matomoSiteId: '',
+      // Restricted Open Data datasets (e.g. 100418): NUXT_PUBLIC_BS_API_KEY
+      bsApiKey: '',
     },
   },
 

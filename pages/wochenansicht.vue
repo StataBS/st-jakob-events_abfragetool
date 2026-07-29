@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
+import {
+  besucherTierForDay,
+  buildVisitorTiersByDay,
+} from '~/composables/useBesucher'
 import { useFilters } from '~/composables/useFilters'
 import {
   addDaysISO,
@@ -34,8 +38,9 @@ const days = computed(() =>
   Array.from({ length: 7 }, (_, i) => addDaysISO(selectedDate.value, i)),
 )
 
-const { fetchEvents } = useBsApi()
+const { fetchEvents, fetchBesucher } = useBsApi()
 const { data: eventsRaw } = await useAsyncData('events', fetchEvents, { server: false })
+const { data: besucherRaw } = await useAsyncData('besucher', fetchBesucher, { server: false })
 const { filterEventsByDate } = useFilters()
 
 const eventsByDay = computed<Record<string, any[]>>(() => {
@@ -43,7 +48,12 @@ const eventsByDay = computed<Record<string, any[]>>(() => {
   return Object.fromEntries(days.value.map(d => [d, filterEventsByDate(src, d)]))
 })
 
+const visitorsByDay = computed(() => buildVisitorTiersByDay(besucherRaw.value))
+
 const countFor = (d:string) => (eventsByDay.value[d]?.length || 0)
+
+const tierFor = (d: string) =>
+  besucherTierForDay(countFor(d) > 0, visitorsByDay.value[d])
 
 const eventCounts = computed<Record<string, number>>(() => {
   const result: Record<string, number> = {}
@@ -128,6 +138,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
         <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
           {{ label(d) }}
         </h2>
+        <BesucherIcon :tier="tierFor(d)" />
 
         <!-- icon-only Tagesansicht button -->
         <button

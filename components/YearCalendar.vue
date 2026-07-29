@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { toISODateString } from '~/composables/useDateUtils'
+import type { KnownBesucherTier } from '~/composables/useBesucher'
 
 type EventItem = Record<string, unknown>
 
 const props = withDefaults(defineProps<{
   year: number
-  selectedDate: string
-  variant: 'events' | 'sperrungen'
-  /** Events (or sperrung events) keyed by YYYY-MM-DD */
+  /** Events keyed by YYYY-MM-DD */
   eventsByDay?: Record<string, EventItem[]>
+  /** Known visitor tiers keyed by YYYY-MM-DD (dataset 100418) */
+  visitorTiersByDay?: Record<string, KnownBesucherTier>
 }>(), {
   eventsByDay: () => ({}),
+  visitorTiersByDay: () => ({}),
 })
 
 const WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
@@ -52,6 +54,11 @@ function eventsFor(iso: string | null): EventItem[] {
   if (!iso) return []
   return props.eventsByDay[iso] || []
 }
+
+function visitorTierFor(iso: string | null): KnownBesucherTier | null {
+  if (!iso) return null
+  return props.visitorTiersByDay[iso] ?? null
+}
 </script>
 
 <template>
@@ -75,9 +82,8 @@ function eventsFor(iso: string | null): EventItem[] {
               :iso="cell.iso"
               :day="cell.day!"
               :month-label="month.label"
-              :selected-date="selectedDate"
-              :variant="variant"
               :events="eventsFor(cell.iso)"
+              :known-visitor-tier="visitorTierFor(cell.iso)"
           />
         </template>
       </div>
