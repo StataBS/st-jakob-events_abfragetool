@@ -63,9 +63,9 @@ const enhancedColumns = computed(() =>
           <IconHoverBox
               v-if="row.ticketintegration"
               variant="info"
-              title="Ticket verfügbar"
+              title="Ticketintegration"
               :body="TICKET_BODY"
-              aria-label="Ticket verfügbar"
+              aria-label="Ticketintegration"
           >
             <MaskIcon
                 src="/icons/tickets.svg"
