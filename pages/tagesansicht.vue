@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { useFilters } from '~/composables/useFilters'
-import { addDaysISO, normalizeISODateString, todayISODateString } from '~/composables/useDateUtils'
+import {
+  addDaysISO,
+  normalizeISODateString,
+  parseISO,
+  todayISODateString,
+} from '~/composables/useDateUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,6 +96,13 @@ const iconSrcMap = computed<Record<string, string>>(
     () => Object.fromEntries(Object.entries(iconFileByTransport).map(([k,f]) => [k, iconUrl(f)]))
 )
 
+// label like "Montag, 10.11.2025"
+const dayLabel = computed(() =>
+  (parseISO(selectedDate.value) ?? new Date()).toLocaleDateString('de-CH', {
+    weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
+  }),
+)
+
 // switch handler (go to Wochenansicht / Jahresansicht)
 function onSwitch(to: 'tag'|'woche'|'jahr') {
   if (to === 'woche') {
@@ -112,6 +124,9 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
 
   <div class="container">
     <div class="my-60">
+      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-10">
+        {{ dayLabel }}
+      </h2>
       <EventsTable v-if="events.length" :items="events" />
       <NoEvents v-else />
     </div>
