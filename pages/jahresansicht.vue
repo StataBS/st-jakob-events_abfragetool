@@ -124,8 +124,8 @@ function onSwitch(to: ViewMode) {
   <div class="container">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 my-40">
       <KPICard title="Anzahl Events" :value="kpiEventCount" />
-      <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
       <KPICard title="Anzahl Tage mit mehreren Events" :value="kpiMultiEventDays" />
+      <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
     </div>
 
     <section class="mb-60">
