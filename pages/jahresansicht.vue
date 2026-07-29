@@ -13,16 +13,29 @@ type ViewMode = 'tag' | 'woche' | 'jahr'
 const route = useRoute()
 const router = useRouter()
 
+const MIN_YEAR = 2025
 const defaultIso = todayISODateString()
-const selectedDate = ref<string>((route.query.datum as string) || defaultIso)
+
+function clampToMinYear(iso: string): string {
+  const year = Number(iso.slice(0, 4))
+  if (year >= MIN_YEAR) return iso
+  return `${MIN_YEAR}${iso.slice(4)}`
+}
+
+const selectedDate = ref<string>(
+  clampToMinYear((route.query.datum as string) || defaultIso),
+)
 
 function shiftYear(deltaYears: number) {
-  selectedDate.value = addYearsISO(selectedDate.value, deltaYears)
+  const next = addYearsISO(selectedDate.value, deltaYears)
+  const year = Number(next.slice(0, 4))
+  if (year < MIN_YEAR) return
+  selectedDate.value = next
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 watch(selectedDate, (d) => {
-  const n = normalizeISODateString(d) || defaultIso
+  const n = clampToMinYear(normalizeISODateString(d) || defaultIso)
   if (n !== d) selectedDate.value = n
   router.replace({ path: '/jahresansicht', query: { ...route.query, datum: n } })
 })

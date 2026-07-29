@@ -46,12 +46,11 @@
   }
 
   .lightbox__stage {
-    @apply relative flex-1 flex items-center justify-center overflow-hidden touch-none select-none px-15 pb-40;
+    @apply relative flex-1 flex items-center justify-center overflow-hidden select-none px-15 pb-40;
   }
 
   .lightbox__img {
-    @apply max-w-full max-h-full object-contain origin-center transition-transform duration-75 will-change-transform;
-    touch-action: none;
+    @apply max-w-full max-h-full object-contain cursor-pointer;
   }
 
   .lightbox__hint {

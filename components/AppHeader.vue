@@ -39,6 +39,8 @@ const switchTargets = computed<{ to: ViewMode; label: string }[]>(() => {
   return all.filter(t => t.to !== props.viewMode)
 })
 
+const MIN_YEAR = 2025
+
 const prevAria = computed(() => {
   if (props.viewMode === 'jahr') return 'Vorheriges Jahr'
   if (props.viewMode === 'woche') return 'Vorherige Woche'
@@ -51,7 +53,13 @@ const nextAria = computed(() => {
   return 'Nächster Tag'
 })
 
+const canGoPrev = computed(() => {
+  if (props.viewMode !== 'jahr') return true
+  return selectedYear.value > MIN_YEAR
+})
+
 const shiftBy = (direction: -1 | 1) => {
+  if (direction === -1 && !canGoPrev.value) return
   if (props.viewMode === 'jahr') emit('shift', direction)
   else if (props.viewMode === 'woche') emit('shift', direction * 7)
   else emit('shift', direction)
@@ -85,6 +93,8 @@ const shiftBy = (direction: -1 | 1) => {
               <button
                   type="button"
                   class="button is-action is-icon-only shrink-0"
+                  :class="{ 'opacity-40 cursor-not-allowed': !canGoPrev }"
+                  :disabled="!canGoPrev"
                   @click="shiftBy(-1)"
                   :aria-label="prevAria"
                   :title="prevAria"
@@ -96,7 +106,7 @@ const shiftBy = (direction: -1 | 1) => {
 
               <div v-if="viewMode === 'jahr'" class="w-[260px] max-w-full">
                 <div
-                    class="flex items-center justify-center h-[44px] px-15 bg-white border border-gray-300 rounded text-base font-bold text-gray-900"
+                    class="flex items-center justify-center h-[44px] px-15 bg-white border border-blue-900 rounded text-base text-gray-900"
                     aria-live="polite"
                 >
                   {{ selectedYear }}

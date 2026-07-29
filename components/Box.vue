@@ -89,7 +89,7 @@ function openLightbox(index: number) {
             :key="`${src}-${i}`"
             type="button"
             class="box__image-btn"
-            :aria-label="alts?.[i] ? `Bild vergrössern: ${alts[i]}` : 'Bild vergrössern'"
+            :aria-label="alts?.[i] ? `Bild öffnen: ${alts[i]}` : 'Bild öffnen'"
             @click="openLightbox(i)"
         >
           <img
