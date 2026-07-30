@@ -136,7 +136,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
   />
 
   <div class="container">
-    <div class="my-60">
+    <div class="mt-40 mb-40">
       <div class="flex items-center gap-10 min-w-0 mb-10">
         <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
           {{ dayLabel }}
@@ -151,7 +151,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
     <InfoBox :htmlBlocks="infoTexts" />
     <TimedInfoBox :items="timedInfosForDay" />
 
-    <h2 class="text-2xl font-bold my-20 text-gray-900">Anreiseempfehlungen</h2>
+    <h2 class="text-2xl font-bold mt-40 mb-20 text-gray-900">Anreiseempfehlungen</h2>
     <TransportTabs v-model="activeTransport" :icon-src-map="iconSrcMap" />
 
     <RecommendationBox
@@ -162,7 +162,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
         :icon-src="iconSrcMap[activeTransport]"
     />
 
-    <div class="my-30 text-gray-700">
+    <div class="mt-40 mb-30 text-gray-700">
       Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen.<br />
       Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
     </div>

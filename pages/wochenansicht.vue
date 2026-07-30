@@ -109,7 +109,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
   />
 
   <div class="container">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-10 my-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-20 mt-40 mb-40">
       <KPICard
           v-for="d in days"
           :key="d"
@@ -121,35 +121,36 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
       />
     </div>
 
-    <section
-        v-for="d in days"
-        :key="d"
-        :id="`d-${d}`"
-        class="my-60"
-    >
-      <div class="flex items-center gap-10 min-w-[200px] mb-10">
-        <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
-          {{ label(d) }}
-        </h2>
-        <BesucherIcon :tier="tierFor(d)" />
+    <div class="space-y-40">
+      <section
+          v-for="d in days"
+          :key="d"
+          :id="`d-${d}`"
+      >
+        <div class="flex items-center gap-10 min-w-[200px] mb-10">
+          <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
+            {{ label(d) }}
+          </h2>
+          <BesucherIcon :tier="tierFor(d)" />
 
-        <!-- icon-only Tagesansicht button -->
-        <button
-            class="button is-action is-icon-only shrink-0"
-            @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
-            :aria-label="`Tagesansicht für ${label(d)}`"
-        >
-      <span class="arrow-icon">
-        <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
-      </span>
-        </button>
-      </div>
+          <!-- icon-only Tagesansicht button -->
+          <button
+              class="button is-action is-icon-only shrink-0"
+              @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
+              :aria-label="`Tagesansicht für ${label(d)}`"
+          >
+        <span class="arrow-icon">
+          <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
+        </span>
+          </button>
+        </div>
 
-      <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" show-sperrung-hover />
-      <NoEvents v-else />
-    </section>
+        <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" show-sperrung-hover />
+        <NoEvents v-else />
+      </section>
+    </div>
     <!-- Week paging controls -->
-    <div class="flex flex-wrap justify-center items-center gap-20 my-40">
+    <div class="flex flex-wrap justify-center items-center gap-20 mt-40 mb-40">
       <button
           class="button !px-10 is-action has-icon"
           @click="shiftWeek(-7)"
@@ -169,7 +170,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
         </span>
       </button>
     </div>
-    <div class="my-30 text-gray-700">
+    <div class="mt-40 mb-30 text-gray-700">
       Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen.<br />
       Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
     </div>

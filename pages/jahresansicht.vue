@@ -159,7 +159,7 @@ function onSwitch(to: ViewMode) {
     </div>
 
     <section class="mb-40">
-      <h2 class="text-2xl font-bold my-20 text-gray-900">
+      <h2 class="text-2xl font-bold mt-0 mb-20 text-gray-900">
         Erwartete Besucherzahl und Sperrungen
       </h2>
 
@@ -189,7 +189,7 @@ function onSwitch(to: ViewMode) {
       />
     </section>
 
-    <div class="my-30 text-gray-700">
+    <div class="mt-40 mb-30 text-gray-700">
       Es kann jederzeit kurzfristig zu Änderungen bei den Events und Sperrungen kommen.<br />
       Je kurzfristiger die Abfrage vor der Veranstaltung getätigt wird, desto verlässlicher ist die Angabe.
     </div>
