@@ -24,6 +24,7 @@
 @import './components/hero-image.css';
 @import './components/map-image.css';
 @import './components/input.css';
+@import './components/dropdown.css';
 
 @theme {
   --spacing-*: initial;

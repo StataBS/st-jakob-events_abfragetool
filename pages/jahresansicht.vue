@@ -17,6 +17,20 @@ const router = useRouter()
 const MIN_YEAR = 2025
 const defaultIso = todayISODateString()
 
+/** Exact `ort` values from dataset 100419 (hyphenated where applicable). */
+const LOCATION_OPTIONS = [
+  { label: 'Alle Standorte', value: '' },
+  { label: 'St. Jakob-Park', value: 'St. Jakob-Park' },
+  { label: 'St. Jakobshalle', value: 'St. Jakobshalle' },
+  { label: 'St. Jakob-Arena', value: 'St. Jakob-Arena' },
+  { label: 'Gartenbad St. Jakob', value: 'Gartenbad St. Jakob' },
+  { label: 'Sportanlage St. Jakob', value: 'Sportanlage St. Jakob' },
+  { label: 'Schänzli', value: 'Schänzli' },
+  { label: 'Park im Grünen', value: 'Park im Grünen' },
+] as const
+
+const selectedOrt = ref('')
+
 function clampToMinYear(iso: string): string {
   const year = Number(iso.slice(0, 4))
   if (year >= MIN_YEAR) return iso
@@ -56,9 +70,12 @@ function eventIso(e: EventItem): string | null {
 
 const yearEvents = computed(() => {
   const year = String(selectedYear.value)
+  const ort = selectedOrt.value
   return (eventsRaw.value || []).filter((e: EventItem) => {
     const iso = eventIso(e)
-    return iso && iso.startsWith(`${year}-`)
+    if (!iso || !iso.startsWith(`${year}-`)) return false
+    if (ort && String(e.ort ?? '') !== ort) return false
+    return true
   }) as EventItem[]
 })
 
@@ -127,7 +144,15 @@ function onSwitch(to: ViewMode) {
   />
 
   <div class="container">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 my-40">
+    <div class="max-w-[360px] mt-40 mb-20">
+      <DropdownSelect
+          v-model="selectedOrt"
+          label="Standort"
+          :options="[...LOCATION_OPTIONS]"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 mb-40">
       <KPICard title="Anzahl Events" :value="kpiEventCount" />
       <KPICard title="Anzahl Tage mit mehreren Events" :value="kpiMultiEventDays" />
       <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
