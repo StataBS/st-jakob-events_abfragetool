@@ -18,7 +18,6 @@ const meta = computed(() => besucherMeta(props.tier))
       v-if="meta && withHover"
       variant="besucher"
       :title="meta.label"
-      :body="meta.body"
       :aria-label="meta.label"
   >
     <img

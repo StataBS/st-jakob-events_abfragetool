@@ -12,11 +12,12 @@ const props = withDefaults(defineProps<{
   variant?: 'info' | 'warning' | 'besucher'
   title: string
   titleAddon?: string | null
-  body: string
+  body?: string | null
   ariaLabel?: string
 }>(), {
   variant: 'info',
   titleAddon: null,
+  body: null,
   ariaLabel: undefined,
 })
 
@@ -110,10 +111,11 @@ function onTriggerClick(event: MouseEvent) {
           :side-offset="6"
           :avoid-collisions="true"
           :collision-padding="8"
-          class="z-50 w-[min(360px,calc(100vw-16px))] rounded-large border p-15 pr-50 shadow-[0_10px_25px_#BABABA] outline-none"
-          :class="accent.panel"
+          class="z-50 w-[min(360px,calc(100vw-16px))] rounded-large border p-15 shadow-[0_10px_25px_#BABABA] outline-none"
+          :class="[accent.panel, variant === 'besucher' ? '' : 'pr-50']"
       >
         <div
+            v-if="variant !== 'besucher'"
             class="absolute right-10 top-10 flex items-center justify-center w-28 h-28"
             :class="accent.text"
             aria-hidden="true"
@@ -123,20 +125,16 @@ function onTriggerClick(event: MouseEvent) {
               src="/icons/triangle-warning.svg"
               class="w-full h-full"
           />
-          <img
-              v-else-if="variant === 'besucher'"
-              src="/icons/users-3.svg"
-              alt=""
-              class="h-full w-auto"
-              aria-hidden="true"
-          >
           <IconSymbolCircleWarning
               v-else
               class="w-full h-full transform rotate-180"
           />
         </div>
 
-        <div class="flex flex-wrap items-baseline mr-20">
+        <div
+            class="flex flex-wrap items-baseline"
+            :class="variant === 'besucher' ? '' : 'mr-20'"
+        >
           <strong
               class="text-base mr-[6px]"
               :class="accent.text"
@@ -146,7 +144,7 @@ function onTriggerClick(event: MouseEvent) {
           <span v-if="titleAddon" class="text-sm text-gray-900">({{ titleAddon }})</span>
         </div>
 
-        <p class="mb-0 mt-10 text-sm text-gray-900 hyphens-auto">
+        <p v-if="body" class="mb-0 mt-10 text-sm text-gray-900 hyphens-auto">
           {{ body }}
         </p>
       </HoverCardContent>

@@ -5,27 +5,22 @@ export type KnownBesucherTier = 'low' | 'mid' | 'high'
 const TIER_META: Record<Exclude<BesucherTier, 'none'>, {
   icon: string
   label: string
-  body: string
 }> = {
   unknown: {
     icon: '/icons/users-0.svg',
-    label: 'Besucherzahl unbekannt',
-    body: 'Für diesen Tag ist eine Veranstaltung geplant, die erwartete Besucherzahl ist jedoch noch nicht bekannt.',
+    label: 'Erwartete Besucherzahl unbekannt',
   },
   low: {
     icon: '/icons/users-1.svg',
-    label: 'Unter 5’000 Besuchende',
-    body: 'Erwartete Besucherzahl: unter 5’000.',
+    label: 'Unter 5’000 Besuchende erwartet',
   },
   mid: {
     icon: '/icons/users-2.svg',
-    label: '5’000 bis 14’999 Besuchende',
-    body: 'Erwartete Besucherzahl: 5’000 bis 14’999.',
+    label: '5’000 bis 14’999 Besuchende erwartet',
   },
   high: {
     icon: '/icons/users-3.svg',
-    label: '15’000 und mehr Besuchende',
-    body: 'Erwartete Besucherzahl: 15’000 oder mehr.',
+    label: '15’000 und mehr Besuchende erwartet',
   },
 }
 
