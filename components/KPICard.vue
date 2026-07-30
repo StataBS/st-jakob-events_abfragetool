@@ -7,6 +7,10 @@ const props = defineProps<{
   to?: string
 }>()
 
+const isExternalHref = computed(() =>
+  Boolean(props.href && /^https?:\/\//i.test(props.href)),
+)
+
 const tag = computed(() => {
   if (props.to) return resolveComponent('NuxtLink')
   if (props.href) return 'a'
@@ -15,7 +19,12 @@ const tag = computed(() => {
 
 const linkAttrs = computed(() => {
   if (props.to) return { to: props.to }
-  if (props.href) return { href: props.href, target: '_blank', rel: 'noopener noreferrer' }
+  if (props.href) {
+    if (isExternalHref.value) {
+      return { href: props.href, target: '_blank', rel: 'noopener noreferrer' }
+    }
+    return { href: props.href }
+  }
   return {}
 })
 </script>
