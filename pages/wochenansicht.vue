@@ -54,6 +54,23 @@ const countFor = (d:string) => (eventsByDay.value[d]?.length || 0)
 const tierFor = (d: string) =>
   besucherTierForDay(countFor(d) > 0, visitorsByDay.value[d])
 
+const SPERRUNG_BODY = 'Voraussichtlich wird die Kreuzung im Raum St. Jakob für den motorisierten Individualverkehr zeitweise gesperrt.'
+
+function sperrungNamesFor(d: string): string[] {
+  const names = new Set<string>()
+  for (const e of eventsByDay.value[d] || []) {
+    if (e.sperrung !== 'ja') continue
+    const name = String(e.name ?? '').trim()
+    if (name) names.add(name)
+  }
+  return Array.from(names)
+}
+
+function sperrungAddonFor(d: string): string | null {
+  const names = sperrungNamesFor(d)
+  return names.length ? names.join(', ') : null
+}
+
 const eventCounts = computed<Record<string, number>>(() => {
   const result: Record<string, number> = {}
   const src = eventsRaw.value || []
@@ -131,6 +148,14 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
           <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
             {{ label(d) }}
           </h2>
+          <IconHoverBox
+              v-if="sperrungAddonFor(d)"
+              variant="warning"
+              title="Geplante Sperrung"
+              :title-addon="sperrungAddonFor(d)"
+              :body="SPERRUNG_BODY"
+              aria-label="Geplante Sperrung"
+          />
           <BesucherIcon :tier="tierFor(d)" />
 
           <!-- icon-only Tagesansicht button -->
@@ -145,7 +170,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
           </button>
         </div>
 
-        <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" show-sperrung-hover />
+        <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" />
         <NoEvents v-else />
       </section>
     </div>

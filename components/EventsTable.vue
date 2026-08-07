@@ -5,10 +5,8 @@ import { computed } from 'vue'
 type Item = Record<string, unknown>
 const props = withDefaults(defineProps<{
   items?: Item[]
-  showSperrungHover?: boolean
 }>(), {
   items: () => [],
-  showSperrungHover: false,
 })
 
 type Column = { key: string; label: string; always?: boolean; hidden?: boolean }
@@ -22,7 +20,6 @@ const columns: Column[] = [
 ]
 
 const TICKET_BODY = 'Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert.'
-const SPERRUNG_BODY = 'Voraussichtlich wird die Kreuzung im Raum St. Jakob für den motorisierten Individualverkehr zeitweise gesperrt.'
 
 const isBlank = (v: unknown) =>
     v == null || (typeof v === 'string' && v.trim() === '')
@@ -55,33 +52,19 @@ const enhancedColumns = computed(() =>
           {{ value ?? '–' }}
         </template>
 
-        <span
-            v-if="row.ticketintegration || (showSperrungHover && row.sperrung === 'ja')"
-            class="inline-flex items-center gap-8"
+        <!-- Tickets icon if Ticketintegration is truthy -->
+        <IconHoverBox
+            v-if="row.ticketintegration"
+            variant="info"
+            title="Ticketintegration"
+            :body="TICKET_BODY"
+            aria-label="Ticketintegration"
         >
-          <!-- Tickets icon if Ticketintegration is truthy -->
-          <IconHoverBox
-              v-if="row.ticketintegration"
-              variant="info"
-              title="Ticketintegration"
-              :body="TICKET_BODY"
-              aria-label="Ticketintegration"
-          >
-            <MaskIcon
-                src="/icons/tickets.svg"
-                class="w-20 h-20 text-primary-600"
-            />
-          </IconHoverBox>
-
-          <!-- Sperrung warning (Wochenansicht) -->
-          <IconHoverBox
-              v-if="showSperrungHover && row.sperrung === 'ja'"
-              variant="warning"
-              title="Geplante Sperrung"
-              :body="SPERRUNG_BODY"
-              aria-label="Geplante Sperrung"
+          <MaskIcon
+              src="/icons/tickets.svg"
+              class="w-20 h-20 text-primary-600"
           />
-        </span>
+        </IconHoverBox>
       </span>
     </template>
   </Table>

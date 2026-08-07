@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { toISODateString } from '~/composables/useDateUtils'
-import type { KnownBesucherTier } from '~/composables/useBesucher'
+import {
+  besucherTierForDay,
+  type KnownBesucherTier,
+} from '~/composables/useBesucher'
 
 type EventItem = Record<string, unknown>
+export type CalendarFillMode = 'visitor' | 'event'
 
 const props = withDefaults(defineProps<{
   year: number
@@ -10,9 +14,21 @@ const props = withDefaults(defineProps<{
   eventsByDay?: Record<string, EventItem[]>
   /** Known visitor tiers keyed by YYYY-MM-DD (dataset 100418) */
   visitorTiersByDay?: Record<string, KnownBesucherTier>
+  /**
+   * `visitor` = Besucherzahl blues/grays.
+   * `event` = yellow for any day with events (Standort filter).
+   */
+  fillMode?: CalendarFillMode
+  /** Sperrung-causing event names keyed by YYYY-MM-DD (all Standorte) */
+  sperrungNamesByDay?: Record<string, string[]>
+  /** Days with any event across all Standorte (for BesucherIcon under Standort filter) */
+  anyEventsByDay?: Record<string, true>
 }>(), {
   eventsByDay: () => ({}),
   visitorTiersByDay: () => ({}),
+  fillMode: 'visitor',
+  sperrungNamesByDay: () => ({}),
+  anyEventsByDay: () => ({}),
 })
 
 const WEEKDAYS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']
@@ -59,10 +75,39 @@ function visitorTierFor(iso: string | null): KnownBesucherTier | null {
   if (!iso) return null
   return props.visitorTiersByDay[iso] ?? null
 }
+
+function sperrungNamesFor(iso: string | null): string[] {
+  if (!iso) return []
+  return props.sperrungNamesByDay[iso] || []
+}
+
+function hasAnyEventsOnDay(iso: string | null): boolean {
+  if (!iso) return false
+  if (props.anyEventsByDay[iso]) return true
+  // Fallback: filtered events (Alle Standorte / when map not provided)
+  return eventsFor(iso).length > 0
+}
+
+/** Resolve cell fill class here so Standort yellow cannot be skipped. */
+function fillClassFor(iso: string | null): string {
+  if (!iso) return ''
+  const events = eventsFor(iso)
+  if (props.fillMode === 'event') {
+    return events.length > 0 ? 'year-calendar__cell--event' : ''
+  }
+  const tier = besucherTierForDay(events.length > 0, visitorTierFor(iso))
+  switch (tier) {
+    case 'unknown': return 'year-calendar__cell--unknown'
+    case 'low': return 'year-calendar__cell--low'
+    case 'mid': return 'year-calendar__cell--mid'
+    case 'high': return 'year-calendar__cell--high'
+    default: return ''
+  }
+}
 </script>
 
 <template>
-  <div class="year-calendar">
+  <div class="year-calendar" :data-fill-mode="fillMode">
     <div v-for="month in months" :key="month.monthIndex" class="year-calendar__month min-w-0">
       <h3 class="year-calendar__month-title">{{ month.label }}</h3>
 
@@ -84,6 +129,9 @@ function visitorTierFor(iso: string | null): KnownBesucherTier | null {
               :month-label="month.label"
               :events="eventsFor(cell.iso)"
               :known-visitor-tier="visitorTierFor(cell.iso)"
+              :fill-class="fillClassFor(cell.iso)"
+              :sperrung-names="sperrungNamesFor(cell.iso)"
+              :besucher-has-events="hasAnyEventsOnDay(cell.iso)"
           />
         </template>
       </div>

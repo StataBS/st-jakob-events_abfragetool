@@ -20,14 +20,31 @@ type EventItem = Record<string, unknown>
 const TICKET_BODY = 'Das ÖV-Ticket für die Hin- und Rückreise innerhalb des TNW-Gebiets ist im Veranstaltungspreis inkludiert.'
 const SPERRUNG_BODY = 'Voraussichtlich wird die Kreuzung im Raum St. Jakob für den motorisierten Individualverkehr zeitweise gesperrt.'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   iso: string
   day: number
   monthLabel: string
   events: EventItem[]
   /** Known visitor tier for this day from dataset 100418 */
   knownVisitorTier?: KnownBesucherTier | null
-}>()
+  /** Precomputed fill class from YearCalendar (visitor blues or event yellow) */
+  fillClass?: string
+  /**
+   * Event names causing a Sperrung on this day (may include other Standorte).
+   * Always preferred over deriving from `events` so filtering cannot hide Sperrung.
+   */
+  sperrungNames?: string[]
+  /**
+   * Whether the day has any events (all Standorte). Used for BesucherIcon so
+   * Standort filtering does not hide erwartete Besucherzahl.
+   */
+  besucherHasEvents?: boolean
+}>(), {
+  knownVisitorTier: null,
+  fillClass: '',
+  sperrungNames: () => [],
+  besucherHasEvents: undefined,
+})
 
 const router = useRouter()
 const open = ref(false)
@@ -46,11 +63,19 @@ const pageCount = computed(() => Math.max(count.value, 1))
 const currentEvent = computed(() => props.events[page.value] ?? null)
 
 const tier = computed<BesucherTier>(() =>
-  besucherTierForDay(count.value > 0, props.knownVisitorTier),
+  besucherTierForDay(
+    props.besucherHasEvents ?? count.value > 0,
+    props.knownVisitorTier,
+  ),
 )
 
-const hasSperrung = computed(() =>
-  props.events.some(e => e.sperrung === 'ja'),
+const resolvedSperrungNames = computed(() => props.sperrungNames)
+
+const hasSperrung = computed(() => resolvedSperrungNames.value.length > 0)
+const sperrungAddon = computed(() =>
+  resolvedSperrungNames.value.length
+    ? resolvedSperrungNames.value.join(', ')
+    : null,
 )
 
 const dayLabel = computed(() =>
@@ -61,16 +86,6 @@ const dayLabel = computed(() =>
     year: 'numeric',
   }),
 )
-
-const fillClass = computed(() => {
-  switch (tier.value) {
-    case 'unknown': return 'year-calendar__cell--unknown'
-    case 'low': return 'year-calendar__cell--low'
-    case 'mid': return 'year-calendar__cell--mid'
-    case 'high': return 'year-calendar__cell--high'
-    default: return ''
-  }
-})
 
 watch(open, (isOpen) => {
   if (isOpen) page.value = 0
@@ -122,13 +137,21 @@ function nextPage() {
           :side-offset="6"
           :avoid-collisions="true"
           :collision-padding="8"
-          class="year-calendar-hover z-50 w-[min(320px,calc(100vw-16px))] rounded-large border border-gray-200 bg-white p-15 shadow-[0_10px_25px_#BABABA] outline-none"
+          class="year-calendar-hover z-50 w-[min(340px,calc(100vw-16px))] rounded-large border border-gray-200 bg-white p-15 shadow-[0_10px_25px_#BABABA] outline-none"
           @open-auto-focus.prevent
       >
-        <div class="year-calendar-hover__title flex items-center gap-10 min-w-0 mb-15">
-          <strong class="text-base text-gray-900 capitalize truncate">
+        <div class="year-calendar-hover__title flex flex-wrap items-center gap-5 mb-15">
+          <strong class="text-base text-gray-900 capitalize whitespace-nowrap">
             {{ dayLabel }}
           </strong>
+          <IconHoverBox
+              v-if="hasSperrung"
+              variant="warning"
+              title="Geplante Sperrung"
+              :title-addon="sperrungAddon"
+              :body="SPERRUNG_BODY"
+              aria-label="Geplante Sperrung"
+          />
           <BesucherIcon :tier="tier" />
           <button
               type="button"
@@ -166,31 +189,18 @@ function nextPage() {
                     {{ displayValue(currentEvent[field.key]) }}
                   </template>
 
-                  <span
-                      v-if="currentEvent.ticketintegration || currentEvent.sperrung === 'ja'"
-                      class="inline-flex items-center gap-8"
+                  <IconHoverBox
+                      v-if="currentEvent.ticketintegration"
+                      variant="info"
+                      title="Ticketintegration"
+                      :body="TICKET_BODY"
+                      aria-label="Ticketintegration"
                   >
-                    <IconHoverBox
-                        v-if="currentEvent.ticketintegration"
-                        variant="info"
-                        title="Ticketintegration"
-                        :body="TICKET_BODY"
-                        aria-label="Ticketintegration"
-                    >
-                      <MaskIcon
-                          src="/icons/tickets.svg"
-                          class="w-20 h-20 text-primary-600"
-                      />
-                    </IconHoverBox>
-
-                    <IconHoverBox
-                        v-if="currentEvent.sperrung === 'ja'"
-                        variant="warning"
-                        title="Geplante Sperrung"
-                        :body="SPERRUNG_BODY"
-                        aria-label="Geplante Sperrung"
+                    <MaskIcon
+                        src="/icons/tickets.svg"
+                        class="w-20 h-20 text-primary-600"
                     />
-                  </span>
+                  </IconHoverBox>
                 </span>
               </template>
               <template v-else>

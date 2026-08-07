@@ -29,7 +29,16 @@ const LOCATION_OPTIONS = [
   { label: 'Park im Grünen', value: 'Park im Grünen' },
 ] as const
 
-const selectedOrt = ref('')
+const VALID_ORTS = new Set(
+  LOCATION_OPTIONS.map(o => o.value).filter(Boolean),
+)
+
+function normalizeOrt(raw: unknown): string {
+  const value = typeof raw === 'string' ? raw : ''
+  return VALID_ORTS.has(value) ? value : ''
+}
+
+const selectedOrt = ref(normalizeOrt(route.query.standort))
 
 function clampToMinYear(iso: string): string {
   const year = Number(iso.slice(0, 4))
@@ -49,19 +58,60 @@ function shiftYear(deltaYears: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+function syncJahresQuery(datum: string, ort: string) {
+  const query = { ...route.query, datum } as Record<string, string | undefined>
+  if (ort) query.standort = ort
+  else delete query.standort
+  router.replace({ path: '/jahresansicht', query })
+}
+
 watch(selectedDate, (d) => {
   const n = clampToMinYear(normalizeISODateString(d) || defaultIso)
-  if (n !== d) selectedDate.value = n
-  router.replace({ path: '/jahresansicht', query: { ...route.query, datum: n } })
+  if (n !== d) {
+    selectedDate.value = n
+    return
+  }
+  syncJahresQuery(n, selectedOrt.value)
 })
 
+watch(selectedOrt, (ort) => {
+  const normalized = normalizeOrt(ort)
+  if (normalized !== ort) {
+    selectedOrt.value = normalized
+    return
+  }
+  syncJahresQuery(selectedDate.value, normalized)
+})
+
+/** Keep local state in sync with browser back/forward. */
+watch(
+  () => [route.query.datum, route.query.standort] as const,
+  ([datum, standort]) => {
+    const nextDate = clampToMinYear(
+      normalizeISODateString((datum as string) || defaultIso) || defaultIso,
+    )
+    if (nextDate !== selectedDate.value) selectedDate.value = nextDate
+
+    const nextOrt = normalizeOrt(standort)
+    if (nextOrt !== selectedOrt.value) selectedOrt.value = nextOrt
+  },
+)
+
 const selectedYear = computed(() => Number(selectedDate.value.slice(0, 4)))
+
+const isStandortFiltered = computed(() => !!selectedOrt.value)
 
 /** e.g. "2026" or "2026: St. Jakob-Park" */
 const yearTitle = computed(() =>
   selectedOrt.value
     ? `${selectedYear.value}: ${selectedOrt.value}`
     : String(selectedYear.value),
+)
+
+const calendarSectionTitle = computed(() =>
+  isStandortFiltered.value
+    ? 'Events und Sperrungen'
+    : 'Erwartete Besucherzahl und Sperrungen',
 )
 
 const { fetchEvents, fetchBesucher } = useBsApi()
@@ -75,15 +125,19 @@ function eventIso(e: EventItem): string | null {
   return /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso : null
 }
 
-const yearEvents = computed(() => {
+/** All events in the selected year (no Standort filter). */
+const allYearEvents = computed(() => {
   const year = String(selectedYear.value)
-  const ort = selectedOrt.value
   return (eventsRaw.value || []).filter((e: EventItem) => {
     const iso = eventIso(e)
-    if (!iso || !iso.startsWith(`${year}-`)) return false
-    if (ort && String(e.ort ?? '') !== ort) return false
-    return true
+    return !!iso && iso.startsWith(`${year}-`)
   }) as EventItem[]
+})
+
+const yearEvents = computed(() => {
+  const ort = selectedOrt.value
+  if (!ort) return allYearEvents.value
+  return allYearEvents.value.filter(e => String(e.ort ?? '') === ort)
 })
 
 const eventsByDay = computed<Record<string, EventItem[]>>(() => {
@@ -100,6 +154,34 @@ const eventsByDay = computed<Record<string, EventItem[]>>(() => {
   return result
 })
 
+/**
+ * Sperrung-causing event names by day — from all Standorte in the year,
+ * so markers stay visible when a different Standort is filtered.
+ */
+const sperrungNamesByDay = computed<Record<string, string[]>>(() => {
+  const result: Record<string, string[]> = {}
+  for (const e of allYearEvents.value) {
+    if (e.sperrung !== 'ja') continue
+    const iso = eventIso(e)
+    if (!iso) continue
+    const name = String(e.name ?? '').trim()
+    if (!name) continue
+    if (!result[iso]) result[iso] = []
+    if (!result[iso].includes(name)) result[iso].push(name)
+  }
+  return result
+})
+
+/** Days with any event (all Standorte) — used for BesucherIcon under Standort filter. */
+const anyEventsByDay = computed<Record<string, true>>(() => {
+  const result: Record<string, true> = {}
+  for (const e of allYearEvents.value) {
+    const iso = eventIso(e)
+    if (iso) result[iso] = true
+  }
+  return result
+})
+
 const visitorsByDay = computed(() => buildVisitorTiersByDay(besucherRaw.value))
 
 const eventCounts = computed<Record<string, number>>(() => {
@@ -111,15 +193,7 @@ const eventCounts = computed<Record<string, number>>(() => {
 })
 
 const kpiEventCount = computed(() => yearEvents.value.length)
-const kpiSperrungDays = computed(() => {
-  const days = new Set<string>()
-  for (const e of yearEvents.value) {
-    if (e.sperrung !== 'ja') continue
-    const iso = eventIso(e)
-    if (iso) days.add(iso)
-  }
-  return days.size
-})
+const kpiSperrungDays = computed(() => Object.keys(sperrungNamesByDay.value).length)
 const kpiDaysWithEventsShare = computed(() => {
   const year = selectedYear.value
   const isLeap =
@@ -130,13 +204,22 @@ const kpiDaysWithEventsShare = computed(() => {
   return `${pct} %`
 })
 
-const LEGEND = [
+const VISITOR_LEGEND = [
   { class: 'bg-blue-300', label: 'unter 5’000' },
   { class: 'bg-blue-500', label: '5’000 bis 14’999' },
   { class: 'bg-blue-700', label: '15’000 und mehr' },
   { class: 'bg-gray-50', label: 'keine Veranstaltung' },
   { class: 'bg-gray-300', label: 'Besucherzahl unbekannt' },
 ] as const
+
+const STANDORT_LEGEND = [
+  { class: 'bg-yellow-300', label: 'Veranstaltung' },
+  { class: 'bg-gray-50', label: 'keine Veranstaltung' },
+] as const
+
+const legendItems = computed(() =>
+  isStandortFiltered.value ? STANDORT_LEGEND : VISITOR_LEGEND,
+)
 
 function onSwitch(to: ViewMode) {
   if (to === 'tag') {
@@ -183,32 +266,39 @@ function onSwitch(to: ViewMode) {
 
     <section class="mb-40">
       <h2 class="text-xl font-bold mt-0 mb-20 text-gray-900">
-        Erwartete Besucherzahl und Sperrungen
+        {{ calendarSectionTitle }}
       </h2>
 
       <div class="year-calendar-legend" role="list">
-        <span
-            v-for="item in LEGEND"
-            :key="item.label"
-            class="year-calendar-legend__item"
-            role="listitem"
-        >
-          <span class="year-calendar-legend__swatch" :class="item.class" aria-hidden="true" />
-          {{ item.label }}
-        </span>
-        <span class="year-calendar-legend__item" role="listitem">
+        <div class="year-calendar-legend__row">
           <span
-              class="year-calendar-legend__swatch year-calendar-legend__swatch--sperrung"
-              aria-hidden="true"
-          />
-          Sperrung
-        </span>
+              v-for="item in legendItems"
+              :key="item.label"
+              class="year-calendar-legend__item"
+              role="listitem"
+          >
+            <span class="year-calendar-legend__swatch" :class="item.class" aria-hidden="true" />
+            {{ item.label }}
+          </span>
+        </div>
+        <div class="year-calendar-legend__row">
+          <span class="year-calendar-legend__item" role="listitem">
+            <span
+                class="year-calendar-legend__swatch year-calendar-legend__swatch--sperrung"
+                aria-hidden="true"
+            />
+            Sperrung
+          </span>
+        </div>
       </div>
 
       <YearCalendar
           :year="selectedYear"
           :events-by-day="eventsByDay"
           :visitor-tiers-by-day="visitorsByDay"
+          :fill-mode="isStandortFiltered ? 'event' : 'visitor'"
+          :sperrung-names-by-day="sperrungNamesByDay"
+          :any-events-by-day="anyEventsByDay"
       />
     </section>
 

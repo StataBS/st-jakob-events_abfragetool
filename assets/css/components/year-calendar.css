@@ -45,6 +45,11 @@
     @apply bg-blue-700;
   }
 
+  /* Standort filter: any event on that day — keep after visitor tiers so it wins if both apply */
+  .year-calendar__cell--event {
+    background-color: #FFCF4D !important; /* yellow-300 */
+  }
+
   /* Bottom-right eighth triangle for Sperrung */
   .year-calendar__cell--has-sperrung::after {
     content: '';
@@ -91,7 +96,11 @@
   }
 
   .year-calendar-legend {
-    @apply flex flex-wrap gap-x-30 gap-y-15 mb-30 text-base text-gray-900;
+    @apply flex flex-col gap-y-15 mb-30 text-base text-gray-900;
+  }
+
+  .year-calendar-legend__row {
+    @apply flex flex-wrap gap-x-30 gap-y-15;
   }
 
   .year-calendar-legend__item {
@@ -104,7 +113,8 @@
 
   .year-calendar-legend__swatch--sperrung {
     position: relative;
-    background-color: #F2F2F2;
+    background-color: #ffffff;
+    border-color: #BABABA; /* gray-300 — visible on white */
     overflow: hidden;
   }
 
