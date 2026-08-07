@@ -129,7 +129,7 @@ function nextPage() {
           <strong class="text-base text-gray-900 capitalize truncate">
             {{ dayLabel }}
           </strong>
-          <BesucherIcon :tier="tier" :with-hover="false" />
+          <BesucherIcon :tier="tier" />
           <button
               type="button"
               class="button is-action is-icon-only shrink-0"
