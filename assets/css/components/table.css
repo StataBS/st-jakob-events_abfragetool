@@ -11,27 +11,26 @@
       @apply inline-link;
     }
 
-    /* Base cells */
+    /* Base cells — taller rows like bs-dashboard-base */
     th,
     td {
-      @apply p-5 text-left first:pl-0;
+      @apply p-10 text-left first:pl-0;
     }
 
     thead {
-      @apply border-b border-b-body text-base text-primary-600;
+      @apply border-b-[1.5px] border-b-body text-base text-primary-600;
 
       th {
         @apply pb-5;
       }
     }
 
-    tbody {
-      tr {
-        @apply border-b;
-      }
+    /* Light grey row separators (desktop) */
+    td {
+      @apply border-b border-b-gray-300;
     }
 
-    /* 2. Mobile “card” layout modifier */
+    /* 2. Mobile “card” layout modifier — unchanged from before */
     &.has-mobile-style {
       thead {
         @apply mobile-only:hidden;
@@ -45,7 +44,12 @@
 
       th,
       td {
-        @apply mobile-only:px-0;
+        @apply mobile-only:px-0 mobile-only:py-5;
+      }
+
+      /* Keep previous mobile separators (row borders, not per-cell) */
+      td {
+        @apply mobile-only:border-b-0;
       }
 
       tbody tr {
