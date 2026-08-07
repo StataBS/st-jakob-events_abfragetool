@@ -113,9 +113,15 @@ const kpiSperrungDays = computed(() => {
   }
   return days.size
 })
-const kpiMultiEventDays = computed(
-  () => Object.values(eventsByDay.value).filter(list => list.length > 1).length,
-)
+const kpiDaysWithEventsShare = computed(() => {
+  const year = selectedYear.value
+  const isLeap =
+    (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+  const daysInYear = isLeap ? 366 : 365
+  const daysWithEvents = Object.keys(eventsByDay.value).length
+  const pct = Math.round((daysWithEvents / daysInYear) * 100)
+  return `${pct} %`
+})
 
 const LEGEND = [
   { class: 'bg-gray-50', label: 'keine Veranstaltung' },
@@ -154,7 +160,7 @@ function onSwitch(to: ViewMode) {
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 mb-40">
       <KPICard title="Anzahl Events" :value="kpiEventCount" />
-      <KPICard title="Anzahl Tage mit mehreren Events" :value="kpiMultiEventDays" />
+      <KPICard title="Anteil Tage pro Jahr mit Events" :value="kpiDaysWithEventsShare" />
       <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
     </div>
 
