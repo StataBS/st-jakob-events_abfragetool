@@ -57,6 +57,13 @@ watch(selectedDate, (d) => {
 
 const selectedYear = computed(() => Number(selectedDate.value.slice(0, 4)))
 
+/** e.g. "2026" or "2026: St. Jakob-Park" */
+const yearTitle = computed(() =>
+  selectedOrt.value
+    ? `${selectedYear.value}: ${selectedOrt.value}`
+    : String(selectedYear.value),
+)
+
 const { fetchEvents, fetchBesucher } = useBsApi()
 const { data: eventsRaw } = await useAsyncData('events', fetchEvents, { server: false })
 const { data: besucherRaw } = await useAsyncData('besucher', fetchBesucher, { server: false })
@@ -124,11 +131,11 @@ const kpiDaysWithEventsShare = computed(() => {
 })
 
 const LEGEND = [
-  { class: 'bg-gray-50', label: 'keine Veranstaltung' },
-  { class: 'bg-gray-300', label: 'Besucherzahl unbekannt' },
   { class: 'bg-blue-300', label: 'unter 5’000' },
   { class: 'bg-blue-500', label: '5’000 bis 14’999' },
   { class: 'bg-blue-700', label: '15’000 und mehr' },
+  { class: 'bg-gray-50', label: 'keine Veranstaltung' },
+  { class: 'bg-gray-300', label: 'Besucherzahl unbekannt' },
 ] as const
 
 function onSwitch(to: ViewMode) {
@@ -150,12 +157,22 @@ function onSwitch(to: ViewMode) {
   />
 
   <div class="container">
-    <div class="max-w-[360px] mt-40 mb-20">
-      <DropdownSelect
-          v-model="selectedOrt"
-          label="Standort"
-          :options="[...LOCATION_OPTIONS]"
-      />
+    <div class="mt-40 mb-20">
+      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-10">
+        {{ yearTitle }}
+      </h2>
+      <div class="max-w-[360px]">
+        <DropdownSelect
+            v-model="selectedOrt"
+            label="Filter"
+            :options="[...LOCATION_OPTIONS]"
+        >
+          <template #label>
+            <MaskIcon src="/icons/funnel.svg" class="w-20 h-20 shrink-0" />
+            Filter
+          </template>
+        </DropdownSelect>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 mb-40">
@@ -165,7 +182,7 @@ function onSwitch(to: ViewMode) {
     </div>
 
     <section class="mb-40">
-      <h2 class="text-2xl font-bold mt-0 mb-20 text-gray-900">
+      <h2 class="text-xl font-bold mt-0 mb-20 text-gray-900">
         Erwartete Besucherzahl und Sperrungen
       </h2>
 

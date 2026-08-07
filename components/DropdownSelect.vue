@@ -65,7 +65,7 @@ onUnmounted(() => {
   >
     <div class="dropdown-wrapper">
       <label class="label" :for="uid" :id="`${uid}_label`">
-        {{ label }}
+        <slot name="label">{{ label }}</slot>
       </label>
       <div class="dropdown-inner" :id="`${uid}_inner`">
         <button

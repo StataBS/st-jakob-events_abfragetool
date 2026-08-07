@@ -223,6 +223,10 @@ const selectAttribute = {
   highlight: {
     color: 'purple',
     fillMode: 'outline',
+    // Keep the violet ring only — don't recolor the day number (green stays green, black stays black)
+    contentStyle: {
+      color: 'inherit',
+    },
   },
 }
 </script>
