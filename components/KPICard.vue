@@ -5,6 +5,7 @@ const props = defineProps<{
   value: string | number
   href?: string
   to?: string
+  sparkline?: number[]
 }>()
 
 const isExternalHref = computed(() =>
@@ -27,6 +28,10 @@ const linkAttrs = computed(() => {
   }
   return {}
 })
+
+const hasSparkline = computed(
+  () => Array.isArray(props.sparkline) && props.sparkline.length > 0,
+)
 </script>
 
 <template>
@@ -40,5 +45,8 @@ const linkAttrs = computed(() => {
       <p v-if="description" class="text-xs mt-5">{{ description }}</p>
     </div>
     <p class="kpi-card__value">{{ value }}</p>
+    <div v-if="hasSparkline" class="kpi-card__sparkline">
+      <Sparkline :values="sparkline!" />
+    </div>
   </component>
 </template>

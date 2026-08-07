@@ -15,6 +15,18 @@
     @apply mt-auto pt-10 text-4xl font-bold text-green-500;
   }
 
+  .kpi-card__sparkline {
+    @apply mt-10 w-full min-w-0;
+  }
+
+  .sparkline {
+    @apply block w-full;
+  }
+
+  .sparkline__svg {
+    @apply block w-full overflow-visible;
+  }
+
   .kpi-card--clickable {
     @apply cursor-pointer;
     text-decoration: none;

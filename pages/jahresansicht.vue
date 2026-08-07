@@ -204,6 +204,55 @@ const kpiDaysWithEventsShare = computed(() => {
   return `${pct} %`
 })
 
+/** Months to draw: Jan–Dec for past years; through current month for the current year. */
+function sparklineMonthCount(year: number): number {
+  const now = new Date()
+  if (year < now.getFullYear()) return 12
+  if (year > now.getFullYear()) return 0
+  return now.getMonth() + 1
+}
+
+function daysInMonth(year: number, monthIndex: number): number {
+  return new Date(year, monthIndex + 1, 0).getDate()
+}
+
+const kpiEventSparkline = computed(() => {
+  const year = selectedYear.value
+  const n = sparklineMonthCount(year)
+  const counts = Array.from({ length: n }, () => 0)
+  for (const e of yearEvents.value) {
+    const iso = eventIso(e)
+    if (!iso) continue
+    const month = Number(iso.slice(5, 7)) - 1
+    if (month >= 0 && month < n) counts[month]! += 1
+  }
+  return counts
+})
+
+const kpiDaysShareSparkline = computed(() => {
+  const year = selectedYear.value
+  const n = sparklineMonthCount(year)
+  const daysWithEvents = Array.from({ length: n }, () => 0)
+  for (const iso of Object.keys(eventsByDay.value)) {
+    const month = Number(iso.slice(5, 7)) - 1
+    if (month >= 0 && month < n) daysWithEvents[month]! += 1
+  }
+  return daysWithEvents.map((days, month) =>
+    Math.round((days / daysInMonth(year, month)) * 100),
+  )
+})
+
+const kpiSperrungSparkline = computed(() => {
+  const year = selectedYear.value
+  const n = sparklineMonthCount(year)
+  const counts = Array.from({ length: n }, () => 0)
+  for (const iso of Object.keys(sperrungNamesByDay.value)) {
+    const month = Number(iso.slice(5, 7)) - 1
+    if (month >= 0 && month < n) counts[month]! += 1
+  }
+  return counts
+})
+
 const VISITOR_LEGEND = [
   { class: 'bg-blue-300', label: 'unter 5’000' },
   { class: 'bg-blue-500', label: '5’000 bis 14’999' },
@@ -259,9 +308,21 @@ function onSwitch(to: ViewMode) {
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20 mb-40">
-      <KPICard title="Anzahl Events" :value="kpiEventCount" />
-      <KPICard title="Anteil Tage pro Jahr mit Events" :value="kpiDaysWithEventsShare" />
-      <KPICard title="Anzahl Sperrungen" :value="kpiSperrungDays" />
+      <KPICard
+          title="Anzahl Events"
+          :value="kpiEventCount"
+          :sparkline="kpiEventSparkline"
+      />
+      <KPICard
+          title="Anteil Tage pro Jahr mit Events"
+          :value="kpiDaysWithEventsShare"
+          :sparkline="kpiDaysShareSparkline"
+      />
+      <KPICard
+          title="Anzahl Sperrungen"
+          :value="kpiSperrungDays"
+          :sparkline="kpiSperrungSparkline"
+      />
     </div>
 
     <section class="mb-40">
