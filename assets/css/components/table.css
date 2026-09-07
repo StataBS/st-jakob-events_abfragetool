@@ -95,7 +95,11 @@
     }
   }
 
-  /* 4. Header-only: hide body everywhere */
+  /* 4. Header-only: hide body everywhere, no header underline */
+  .table--header-only thead {
+    @apply border-b-0;
+  }
+
   .table--header-only tbody {
     display: none;
   }

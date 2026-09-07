@@ -192,71 +192,81 @@ const eventCounts = computed<Record<string, number>>(() => {
   return result
 })
 
+function daysInCalendarYear(year: number): number {
+  const isLeap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+  return isLeap ? 366 : 365
+}
+
+const MONTHS_IN_YEAR = 12
+
+function monthIndex(iso: string): number {
+  return Number(iso.slice(5, 7)) - 1
+}
+
 const kpiEventCount = computed(() => yearEvents.value.length)
 const kpiSperrungDays = computed(() => Object.keys(sperrungNamesByDay.value).length)
 const kpiDaysWithEventsShare = computed(() => {
-  const year = selectedYear.value
-  const isLeap =
-    (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
-  const daysInYear = isLeap ? 366 : 365
   const daysWithEvents = Object.keys(eventsByDay.value).length
-  const pct = Math.round((daysWithEvents / daysInYear) * 100)
+  const pct = Math.round(
+    (daysWithEvents / daysInCalendarYear(selectedYear.value)) * 100,
+  )
   return `${pct} %`
 })
 
-/** Months to draw: Jan–Dec for past years; through current month for the current year. */
-function sparklineMonthCount(year: number): number {
-  const now = new Date()
-  if (year < now.getFullYear()) return 12
-  if (year > now.getFullYear()) return 0
-  return now.getMonth() + 1
-}
-
-function daysInMonth(year: number, monthIndex: number): number {
-  return new Date(year, monthIndex + 1, 0).getDate()
-}
-
+/** Always Jan–Dec so empty months (e.g. Oct–Nov 2026) sit at 0 instead of stretching earlier months. */
 const kpiEventSparkline = computed(() => {
-  const year = selectedYear.value
-  const n = sparklineMonthCount(year)
-  const counts = Array.from({ length: n }, () => 0)
+  const counts = Array.from({ length: MONTHS_IN_YEAR }, () => 0)
   for (const e of yearEvents.value) {
     const iso = eventIso(e)
     if (!iso) continue
-    const month = Number(iso.slice(5, 7)) - 1
-    if (month >= 0 && month < n) counts[month]! += 1
+    const month = monthIndex(iso)
+    if (month >= 0 && month < MONTHS_IN_YEAR) counts[month]! += 1
   }
   return counts
 })
 
+/** One point per year from 2025 through the selected year. */
 const kpiDaysShareSparkline = computed(() => {
-  const year = selectedYear.value
-  const n = sparklineMonthCount(year)
-  const daysWithEvents = Array.from({ length: n }, () => 0)
-  for (const iso of Object.keys(eventsByDay.value)) {
-    const month = Number(iso.slice(5, 7)) - 1
-    if (month >= 0 && month < n) daysWithEvents[month]! += 1
+  const endYear = selectedYear.value
+  const ort = selectedOrt.value
+  const daysByYear = new Map<number, Set<string>>()
+  for (let year = MIN_YEAR; year <= endYear; year++) {
+    daysByYear.set(year, new Set())
   }
-  return daysWithEvents.map((days, month) =>
-    Math.round((days / daysInMonth(year, month)) * 100),
-  )
+
+  for (const e of (eventsRaw.value || []) as EventItem[]) {
+    if (ort && String(e.ort ?? '') !== ort) continue
+    const iso = eventIso(e)
+    if (!iso) continue
+    const year = Number(iso.slice(0, 4))
+    daysByYear.get(year)?.add(iso)
+  }
+
+  return Array.from({ length: endYear - MIN_YEAR + 1 }, (_, i) => {
+    const year = MIN_YEAR + i
+    const days = daysByYear.get(year)?.size ?? 0
+    return Math.round((days / daysInCalendarYear(year)) * 100)
+  })
 })
 
+const kpiDaysShareSparklineLabels = computed(() => ({
+  left: String(MIN_YEAR),
+  right: String(selectedYear.value),
+}))
+
 const kpiSperrungSparkline = computed(() => {
-  const year = selectedYear.value
-  const n = sparklineMonthCount(year)
-  const counts = Array.from({ length: n }, () => 0)
+  const counts = Array.from({ length: MONTHS_IN_YEAR }, () => 0)
   for (const iso of Object.keys(sperrungNamesByDay.value)) {
-    const month = Number(iso.slice(5, 7)) - 1
-    if (month >= 0 && month < n) counts[month]! += 1
+    const month = monthIndex(iso)
+    if (month >= 0 && month < MONTHS_IN_YEAR) counts[month]! += 1
   }
   return counts
 })
 
 const VISITOR_LEGEND = [
-  { class: 'bg-blue-300', label: 'unter 5’000' },
-  { class: 'bg-blue-500', label: '5’000 bis 14’999' },
-  { class: 'bg-blue-700', label: '15’000 und mehr' },
+  { class: 'bg-blue-300', label: "unter 5'000" },
+  { class: 'bg-blue-500', label: "5'000 bis 14'999" },
+  { class: 'bg-blue-700', label: "15'000 und mehr" },
   { class: 'bg-gray-50', label: 'keine Veranstaltung' },
   { class: 'bg-gray-300', label: 'Besucherzahl unbekannt' },
 ] as const
@@ -290,7 +300,7 @@ function onSwitch(to: ViewMode) {
 
   <div class="container">
     <div class="mt-40 mb-20">
-      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-10">
+      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-30">
         {{ yearTitle }}
       </h2>
       <div class="max-w-[360px]">
@@ -317,9 +327,11 @@ function onSwitch(to: ViewMode) {
           title="Anteil Tage pro Jahr mit Events"
           :value="kpiDaysWithEventsShare"
           :sparkline="kpiDaysShareSparkline"
+          :sparkline-label-left="kpiDaysShareSparklineLabels.left"
+          :sparkline-label-right="kpiDaysShareSparklineLabels.right"
       />
       <KPICard
-          title="Anzahl Sperrungen"
+          title="Anzahl Tage mit Sperrungen"
           :value="kpiSperrungDays"
           :sparkline="kpiSperrungSparkline"
       />

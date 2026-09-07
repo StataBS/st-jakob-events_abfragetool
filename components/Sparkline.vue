@@ -9,15 +9,16 @@ const props = withDefaults(
     values: number[]
     color?: string
     height?: number
+    labelLeft?: string
+    labelRight?: string
   }>(),
   {
     color: '#2A9749',
     height: 90,
+    labelLeft: 'Januar',
+    labelRight: 'Dezember',
   },
 )
-
-const LABEL_LEFT = 'Januar'
-const LABEL_RIGHT = 'Dezember'
 
 const rootEl = ref<HTMLElement | null>(null)
 const svgEl = ref<SVGSVGElement | null>(null)
@@ -44,7 +45,6 @@ function draw() {
   if (values.length === 0) return
 
   const yMax = Math.max(max(values) ?? 0, 1)
-  // Stretch available months across full width (partial years like 2026 fill the card).
   const xMax = Math.max(values.length - 1, 1)
   const x = scaleLinear().domain([0, xMax]).range([padX, w - padX])
   const y = scaleLinear()
@@ -103,7 +103,7 @@ function draw() {
     .attr('text-anchor', 'start')
     .attr('fill', '#949494')
     .attr('font-size', 11)
-    .text(LABEL_LEFT)
+    .text(props.labelLeft)
 
   svg
     .append('text')
@@ -112,7 +112,7 @@ function draw() {
     .attr('text-anchor', 'end')
     .attr('fill', '#949494')
     .attr('font-size', 11)
-    .text(LABEL_RIGHT)
+    .text(props.labelRight)
 }
 
 let resizeObserver: ResizeObserver | null = null
@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
 })
 
 watch(
-  () => [props.values, props.color, props.height, width.value] as const,
+  () => [props.values, props.color, props.height, props.labelLeft, props.labelRight, width.value] as const,
   () => draw(),
   { deep: true },
 )
@@ -148,7 +148,7 @@ watch(
     ref="rootEl"
     class="sparkline"
     role="img"
-    :aria-label="`Trend von ${LABEL_LEFT} bis ${LABEL_RIGHT}`"
+    :aria-label="`Trend von ${labelLeft} bis ${labelRight}`"
   >
     <svg ref="svgEl" class="sparkline__svg" />
   </div>

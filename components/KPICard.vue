@@ -6,6 +6,8 @@ const props = defineProps<{
   href?: string
   to?: string
   sparkline?: number[]
+  sparklineLabelLeft?: string
+  sparklineLabelRight?: string
 }>()
 
 const isExternalHref = computed(() =>
@@ -46,7 +48,11 @@ const hasSparkline = computed(
     </div>
     <p class="kpi-card__value">{{ value }}</p>
     <div v-if="hasSparkline" class="kpi-card__sparkline">
-      <Sparkline :values="sparkline!" />
+      <Sparkline
+        :values="sparkline!"
+        :label-left="sparklineLabelLeft"
+        :label-right="sparklineLabelRight"
+      />
     </div>
   </component>
 </template>

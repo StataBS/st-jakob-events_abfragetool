@@ -12,15 +12,15 @@ const TIER_META: Record<Exclude<BesucherTier, 'none'>, {
   },
   low: {
     icon: '/icons/users-1.svg',
-    label: 'Unter 5’000 Besuchende erwartet',
+    label: "Unter 5'000 Besuchende erwartet",
   },
   mid: {
     icon: '/icons/users-2.svg',
-    label: '5’000 bis 14’999 Besuchende erwartet',
+    label: "5'000 bis 14'999 Besuchende erwartet",
   },
   high: {
     icon: '/icons/users-3.svg',
-    label: '15’000 und mehr Besuchende erwartet',
+    label: "15'000 und mehr Besuchende erwartet",
   },
 }
 
