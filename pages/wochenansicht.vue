@@ -144,30 +144,32 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
           :key="d"
           :id="`d-${d}`"
       >
-        <div class="flex items-center gap-10 min-w-[200px] mb-10">
-          <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
+        <div class="flex items-center gap-10 min-w-0 mb-10">
+          <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">
             {{ label(d) }}
           </h2>
-          <IconHoverBox
-              v-if="sperrungAddonFor(d)"
-              variant="warning"
-              title="Geplante Sperrung"
-              :title-addon="sperrungAddonFor(d)"
-              :body="SPERRUNG_BODY"
-              aria-label="Geplante Sperrung"
-          />
-          <BesucherIcon :tier="tierFor(d)" />
+          <div class="flex items-center gap-10 shrink-0">
+            <IconHoverBox
+                v-if="sperrungAddonFor(d)"
+                variant="warning"
+                title="Geplante Sperrung"
+                :title-addon="sperrungAddonFor(d)"
+                :body="SPERRUNG_BODY"
+                aria-label="Geplante Sperrung"
+            />
+            <BesucherIcon :tier="tierFor(d)" />
 
-          <!-- icon-only Tagesansicht button -->
-          <button
-              class="button is-action is-icon-only shrink-0"
-              @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
-              :aria-label="`Tagesansicht für ${label(d)}`"
-          >
-        <span class="arrow-icon">
-          <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
-        </span>
-          </button>
+            <!-- icon-only Tagesansicht button -->
+            <button
+                class="button is-action is-icon-only shrink-0"
+                @click="$router.push({ path: '/tagesansicht', query: { datum: d } })"
+                :aria-label="`Tagesansicht für ${label(d)}`"
+            >
+          <span class="arrow-icon">
+            <component :is="IconArrowNorthEast" data-symbol="arrow-north-east" />
+          </span>
+            </button>
+          </div>
         </div>
 
         <EventsTable v-if="eventsByDay[d]?.length" :items="eventsByDay[d]" />

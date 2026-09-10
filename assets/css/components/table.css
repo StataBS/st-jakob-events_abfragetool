@@ -52,10 +52,13 @@
         @apply mobile-only:border-b-0;
       }
 
+      /* Lines only between events; extra space above/below the divider */
       tbody tr {
-        @apply mobile-only:border-t
+        @apply mobile-only:border-t-0
         mobile-only:border-b-0
-        mobile-only:last:border-b;
+        mobile-only:not-last:border-b
+        mobile-only:not-last:pb-15
+        mobile-only:not-first:pt-15;
       }
 
       td[data-head-label]::before {
@@ -71,9 +74,9 @@
         @apply not-last:mb-10;
       }
 
-      /* 3. Header-only variant on mobile */
+      /* 3. Header-only variant on mobile — no divider when there are no events */
       &.table--header-only {
-        @apply mobile-only:border-t mobile-only:border-b-0 mobile-only:border-body;
+        @apply mobile-only:border-0;
 
         thead {
           @apply mobile-only:block mobile-only:border-b-0;

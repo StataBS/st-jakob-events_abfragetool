@@ -73,7 +73,7 @@ function onTriggerClick(event: MouseEvent) {
     <HoverCardTrigger
         as="button"
         type="button"
-        class="inline-flex items-center justify-center p-4 -my-5 rounded-full border border-transparent bg-transparent cursor-pointer transition-colors duration-150 hover:bg-black/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        class="inline-flex items-center justify-center shrink-0 p-4 -my-5 rounded-full border border-transparent bg-transparent cursor-pointer transition-colors duration-150 hover:bg-black/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         :class="[
           accent.triggerHover,
           open ? accent.triggerOpen : '',
@@ -92,7 +92,7 @@ function onTriggerClick(event: MouseEvent) {
             v-else-if="variant === 'besucher'"
             src="/icons/users-3.svg"
             alt=""
-            class="h-20 w-auto"
+            class="h-20 w-auto max-w-none shrink-0"
             width="34"
             height="24"
             aria-hidden="true"

@@ -17,7 +17,8 @@ const router = useRouter()
 const MIN_YEAR = 2025
 const defaultIso = todayISODateString()
 
-/** Exact `ort` values from dataset 100419 (hyphenated where applicable). */
+/** Exact `ort` values from dataset 100419 (hyphenated where applicable).
+ *  Schänzli is omitted from the filter (only a handful of 2025 events). */
 const LOCATION_OPTIONS = [
   { label: 'Alle Standorte', value: '' },
   { label: 'St. Jakob-Park', value: 'St. Jakob-Park' },
@@ -25,7 +26,6 @@ const LOCATION_OPTIONS = [
   { label: 'St. Jakob-Arena', value: 'St. Jakob-Arena' },
   { label: 'Gartenbad St. Jakob', value: 'Gartenbad St. Jakob' },
   { label: 'Sportanlage St. Jakob', value: 'Sportanlage St. Jakob' },
-  { label: 'Schänzli', value: 'Schänzli' },
   { label: 'Park im Grünen', value: 'Park im Grünen' },
 ] as const
 
@@ -300,7 +300,7 @@ function onSwitch(to: ViewMode) {
 
   <div class="container">
     <div class="mt-40 mb-20">
-      <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap mb-30">
+      <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap mb-30">
         {{ yearTitle }}
       </h2>
       <div class="max-w-[360px]">

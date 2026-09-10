@@ -23,7 +23,7 @@ const meta = computed(() => besucherMeta(props.tier))
     <img
         :src="meta.icon"
         alt=""
-        class="h-20 w-auto"
+        class="h-20 w-auto max-w-none shrink-0"
         width="34"
         height="24"
         aria-hidden="true"
@@ -33,7 +33,7 @@ const meta = computed(() => besucherMeta(props.tier))
       v-else-if="meta"
       :src="meta.icon"
       :alt="meta.label"
-      class="h-20 w-auto shrink-0"
+      class="h-20 w-auto max-w-none shrink-0"
       width="34"
       height="24"
   >

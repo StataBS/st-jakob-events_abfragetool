@@ -138,7 +138,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
   <div class="container">
     <div class="mt-40 mb-40">
       <div class="flex items-center gap-10 min-w-0 mb-10">
-        <h2 class="text-2xl font-bold text-gray-900 whitespace-nowrap">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">
           {{ dayLabel }}
         </h2>
         <BesucherIcon :tier="besucherTier" />
