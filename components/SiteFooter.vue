@@ -34,7 +34,7 @@
           <li>
             <a
               class="button is-sm is-link"
-              href="https://data.bs.ch/explore/?refine.tags=eventverkehr-st.jakob"
+              href="https://data.bs.ch/explore/?refines=tags:eventverkehr-st.jakob"
               target="_blank"
               rel="noopener noreferrer"
             >
