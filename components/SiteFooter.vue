@@ -73,7 +73,7 @@
         </ul>
       </nav>
       <div class="footer-copyright">
-        &copy; 2026 Basel-Stadt
+        &copy; 2026 Basel-Stadt, Basel-Landschaft
       </div>
     </div>
   </footer>
