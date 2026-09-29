@@ -138,7 +138,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
   <div class="container">
     <div class="mt-40 mb-40">
       <div class="flex items-center gap-10 min-w-0 mb-10">
-        <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">
+        <h2 class="section-title whitespace-nowrap">
           {{ dayLabel }}
         </h2>
         <BesucherIcon :tier="besucherTier" />
@@ -151,7 +151,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
     <InfoBox :htmlBlocks="infoTexts" />
     <TimedInfoBox :items="timedInfosForDay" />
 
-    <h2 class="text-2xl font-bold mt-40 mb-20 text-gray-900">Anreiseempfehlungen</h2>
+    <h2 class="section-title mt-40 mb-20">Anreiseempfehlungen</h2>
     <TransportTabs v-model="activeTransport" :icon-src-map="iconSrcMap" />
 
     <RecommendationBox

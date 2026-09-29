@@ -300,7 +300,7 @@ function onSwitch(to: ViewMode) {
 
   <div class="container">
     <div class="mt-40 mb-20">
-      <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap mb-30">
+      <h2 class="section-title whitespace-nowrap mb-30">
         {{ yearTitle }}
       </h2>
       <div class="max-w-[360px]">
@@ -338,7 +338,7 @@ function onSwitch(to: ViewMode) {
     </div>
 
     <section class="mb-40">
-      <h2 class="text-xl font-bold mt-0 mb-20 text-gray-900">
+      <h2 class="section-title mt-0 mb-20">
         {{ calendarSectionTitle }}
       </h2>
 

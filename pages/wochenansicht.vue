@@ -145,7 +145,7 @@ function onSwitch(to: 'tag'|'woche'|'jahr') {
           :id="`d-${d}`"
       >
         <div class="flex items-center gap-10 min-w-0 mb-10">
-          <h2 class="text-xl md:text-2xl font-bold text-gray-900 whitespace-nowrap">
+          <h2 class="section-title whitespace-nowrap">
             {{ label(d) }}
           </h2>
           <div class="flex items-center gap-10 shrink-0">
