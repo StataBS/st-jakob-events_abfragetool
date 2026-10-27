@@ -2,7 +2,7 @@
   "name": "veranstaltungen_st_jakob_nuxt",
   "private": true,
   "type": "module",
-  "packageManager": "npm@10.9.2",
+  "packageManager": "npm@10.9.9",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
