@@ -33,7 +33,7 @@
     "d3-scale": "4.0.2",
     "d3-selection": "^3.0.0",
     "d3-shape": "^3.2.0",
-    "motion-v": "^1.10.2",
+    "motion-v": "^2.0.0",
     "nuxt": "^4.0.0",
     "reka-ui": "^2.6.0",
     "tailwindcss": "^4.2.0",
