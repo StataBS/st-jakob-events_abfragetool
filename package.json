@@ -18,7 +18,17 @@
     "brace-expansion@2": "2.1.7",
     "vite-plugin-pwa": {
       "vite": "7.3.7"
-    }
+    },
+    "vue": "3.5.44",
+    "@vue/compiler-core": "3.5.44",
+    "@vue/compiler-dom": "3.5.44",
+    "@vue/compiler-sfc": "3.5.44",
+    "@vue/compiler-ssr": "3.5.44",
+    "@vue/reactivity": "3.5.44",
+    "@vue/runtime-core": "3.5.44",
+    "@vue/runtime-dom": "3.5.44",
+    "@vue/server-renderer": "3.5.44",
+    "@vue/shared": "3.5.44"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.147",
@@ -35,7 +45,7 @@
     "@nuxtjs/i18n": "^10.6.0",
     "@popperjs/core": "^2.11.8",
     "@vite-pwa/nuxt": "^1.0.7",
-    "@vue/compiler-sfc": "^3.5.22",
+    "@vue/compiler-sfc": "3.5.44",
     "baseline-browser-mapping": "^2.11.12",
     "caniuse-lite": "^1.0.30001809",
     "d3-array": "^3.2.4",
@@ -49,7 +59,7 @@
     "tailwindcss": "^4.2.0",
     "undici": "^8.12.3",
     "v-calendar": "^3.1.2",
-    "vue": "^3.5.13",
+    "vue": "3.5.44",
     "vue-router": "^5.0.0",
     "zod": "^4.6.7"
   }

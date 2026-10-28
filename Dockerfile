@@ -31,6 +31,12 @@ ENV NITRO_HOST=0.0.0.0
 
 COPY --from=build /app/.output ./
 
+
+WORKDIR /app/server
+RUN rm -rf node_modules \
+  && npm install --omit=dev --no-package-lock --legacy-peer-deps
+WORKDIR /app
+
 EXPOSE 8010
 
 CMD ["node", "server/index.mjs"]
