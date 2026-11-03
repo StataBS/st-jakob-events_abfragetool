@@ -50,6 +50,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    bsApiKey: '',
     feedback: {
       repo: "Feedback_st-jakob-events",
       repoOwner: "DCC-BS",
@@ -59,7 +60,6 @@ export default defineNuxtConfig({
     public: {
       matomoUrl: '',
       matomoSiteId: '',
-      bsApiKey: '',
     },
   },
 
