@@ -52,9 +52,9 @@ const page = ref(0)
 
 const HOVER_FIELDS: { key: string; label: string }[] = [
   { key: 'name', label: 'Name' },
-  { key: 'start', label: 'Start' },
+  { key: 'beginn', label: 'Beginn' },
   { key: 'ende', label: 'Ende' },
-  { key: 'ort', label: 'Ort' },
+  { key: 'standort', label: 'Standort' },
   { key: 'bemerkung', label: 'Bemerkung' },
 ]
 
@@ -201,6 +201,18 @@ function nextPage() {
                         class="w-20 h-20 text-primary-600"
                     />
                   </IconHoverBox>
+
+                  <a
+                      v-if="currentEvent.ics_link"
+                      :href="currentEvent.ics_link as string"
+                      download
+                      class="inline-flex text-primary-600 hover:text-primary-800"
+                      :title="`${displayValue(currentEvent.name)} zum Kalender hinzufügen`"
+                      :aria-label="`${displayValue(currentEvent.name)} zum Kalender hinzufügen`"
+                      @click.stop
+                  >
+                    <MaskIcon src="/icons/calendar-plus.svg" class="w-20 h-20" />
+                  </a>
                 </span>
               </template>
               <template v-else>

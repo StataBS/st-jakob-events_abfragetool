@@ -13,9 +13,9 @@ type Column = { key: string; label: string; always?: boolean; hidden?: boolean }
 
 const columns: Column[] = [
   { key: 'name',      label: 'Name', always: true },
-  { key: 'start',     label: 'Start' },
+  { key: 'beginn',    label: 'Beginn' },
   { key: 'ende',      label: 'Ende' },
-  { key: 'ort',       label: 'Ort' },
+  { key: 'standort',  label: 'Standort' },
   { key: 'bemerkung', label: 'Bemerkung' },
 ]
 
@@ -65,6 +65,17 @@ const enhancedColumns = computed(() =>
               class="w-20 h-20 text-primary-600"
           />
         </IconHoverBox>
+
+        <a
+            v-if="row.ics_link"
+            :href="row.ics_link as string"
+            download
+            class="inline-flex text-primary-600 hover:text-primary-800"
+            :title="`${value ?? 'Event'} zum Kalender hinzufügen`"
+            :aria-label="`${value ?? 'Event'} zum Kalender hinzufügen`"
+        >
+          <MaskIcon src="/icons/calendar-plus.svg" class="w-20 h-20" />
+        </a>
       </span>
     </template>
   </Table>

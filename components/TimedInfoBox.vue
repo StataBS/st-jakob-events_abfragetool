@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { fmtDE } from '~/composables/useDateUtils'
 
-type Item = { start?: string; ende?: string; text_html?: string }
+type Item = { beginn?: string; ende?: string; text_html?: string }
 
 const props = withDefaults(defineProps<{
   items?: Item[]
@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
 const ranges = computed(() => {
   const set = new Set(
       (props.items || [])
-          .map(it => [it.start, it.ende])
+          .map(it => [it.beginn, it.ende])
           .filter(([s, e]) => s && e)
           .map(([s, e]) => `${fmtDE(s as string)} – ${fmtDE(e as string)}`)
   )

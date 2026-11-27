@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useBsApi } from '~/composables/useBsApi'
 import { buildVisitorTiersByDay } from '~/composables/useBesucher'
-import { sortEventsByStart } from '~/composables/useFilters'
+import { sortEventsByBeginn } from '~/composables/useFilters'
 import {
   addYearsISO,
   normalizeISODateString,
@@ -17,9 +17,9 @@ const router = useRouter()
 const MIN_YEAR = 2025
 const defaultIso = todayISODateString()
 
-/** Exact `ort` values from dataset 100419 (hyphenated where applicable).
+/** Exact `standort` values from dataset 100419 (hyphenated where applicable).
  *  Schänzli is omitted from the filter (only a handful of 2025 events). */
-const LOCATION_OPTIONS = [
+const STANDORT_OPTIONS = [
   { label: 'Alle Standorte', value: '' },
   { label: 'St. Jakob-Park', value: 'St. Jakob-Park' },
   { label: 'St. Jakobshalle', value: 'St. Jakobshalle' },
@@ -29,16 +29,16 @@ const LOCATION_OPTIONS = [
   { label: 'Park im Grünen', value: 'Park im Grünen' },
 ] as const
 
-const VALID_ORTS = new Set(
-  LOCATION_OPTIONS.map(o => o.value).filter(Boolean),
+const VALID_STANDORTE = new Set(
+  STANDORT_OPTIONS.map(o => o.value).filter(Boolean),
 )
 
-function normalizeOrt(raw: unknown): string {
+function normalizeStandort(raw: unknown): string {
   const value = typeof raw === 'string' ? raw : ''
-  return VALID_ORTS.has(value) ? value : ''
+  return VALID_STANDORTE.has(value) ? value : ''
 }
 
-const selectedOrt = ref(normalizeOrt(route.query.standort))
+const selectedStandort = ref(normalizeStandort(route.query.standort))
 
 function clampToMinYear(iso: string): string {
   const year = Number(iso.slice(0, 4))
@@ -58,9 +58,9 @@ function shiftYear(deltaYears: number) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-function syncJahresQuery(datum: string, ort: string) {
+function syncJahresQuery(datum: string, standort: string) {
   const query = { ...route.query, datum } as Record<string, string | undefined>
-  if (ort) query.standort = ort
+  if (standort) query.standort = standort
   else delete query.standort
   router.replace({ path: '/jahresansicht', query })
 }
@@ -71,13 +71,13 @@ watch(selectedDate, (d) => {
     selectedDate.value = n
     return
   }
-  syncJahresQuery(n, selectedOrt.value)
+  syncJahresQuery(n, selectedStandort.value)
 })
 
-watch(selectedOrt, (ort) => {
-  const normalized = normalizeOrt(ort)
-  if (normalized !== ort) {
-    selectedOrt.value = normalized
+watch(selectedStandort, (standort) => {
+  const normalized = normalizeStandort(standort)
+  if (normalized !== standort) {
+    selectedStandort.value = normalized
     return
   }
   syncJahresQuery(selectedDate.value, normalized)
@@ -92,19 +92,19 @@ watch(
     )
     if (nextDate !== selectedDate.value) selectedDate.value = nextDate
 
-    const nextOrt = normalizeOrt(standort)
-    if (nextOrt !== selectedOrt.value) selectedOrt.value = nextOrt
+    const nextStandort = normalizeStandort(standort)
+    if (nextStandort !== selectedStandort.value) selectedStandort.value = nextStandort
   },
 )
 
 const selectedYear = computed(() => Number(selectedDate.value.slice(0, 4)))
 
-const isStandortFiltered = computed(() => !!selectedOrt.value)
+const isStandortFiltered = computed(() => !!selectedStandort.value)
 
 /** e.g. "2026" or "2026: St. Jakob-Park" */
 const yearTitle = computed(() =>
-  selectedOrt.value
-    ? `${selectedYear.value}: ${selectedOrt.value}`
+  selectedStandort.value
+    ? `${selectedYear.value}: ${selectedStandort.value}`
     : String(selectedYear.value),
 )
 
@@ -135,9 +135,9 @@ const allYearEvents = computed(() => {
 })
 
 const yearEvents = computed(() => {
-  const ort = selectedOrt.value
-  if (!ort) return allYearEvents.value
-  return allYearEvents.value.filter(e => String(e.ort ?? '') === ort)
+  const standort = selectedStandort.value
+  if (!standort) return allYearEvents.value
+  return allYearEvents.value.filter(e => String(e.standort ?? '') === standort)
 })
 
 const eventsByDay = computed<Record<string, EventItem[]>>(() => {
@@ -149,7 +149,7 @@ const eventsByDay = computed<Record<string, EventItem[]>>(() => {
     result[iso].push(e)
   }
   for (const iso of Object.keys(result)) {
-    result[iso] = sortEventsByStart(result[iso] ?? [])
+    result[iso] = sortEventsByBeginn(result[iso] ?? [])
   }
   return result
 })
@@ -228,14 +228,14 @@ const kpiEventSparkline = computed(() => {
 /** One point per year from 2025 through the selected year. */
 const kpiDaysShareSparkline = computed(() => {
   const endYear = selectedYear.value
-  const ort = selectedOrt.value
+  const standort = selectedStandort.value
   const daysByYear = new Map<number, Set<string>>()
   for (let year = MIN_YEAR; year <= endYear; year++) {
     daysByYear.set(year, new Set())
   }
 
   for (const e of (eventsRaw.value || []) as EventItem[]) {
-    if (ort && String(e.ort ?? '') !== ort) continue
+    if (standort && String(e.standort ?? '') !== standort) continue
     const iso = eventIso(e)
     if (!iso) continue
     const year = Number(iso.slice(0, 4))
@@ -305,9 +305,9 @@ function onSwitch(to: ViewMode) {
       </h2>
       <div class="max-w-[360px]">
         <DropdownSelect
-            v-model="selectedOrt"
+            v-model="selectedStandort"
             label="Filter"
-            :options="[...LOCATION_OPTIONS]"
+            :options="[...STANDORT_OPTIONS]"
         >
           <template #label>
             <MaskIcon src="/icons/funnel.svg" class="w-20 h-20 shrink-0" />
